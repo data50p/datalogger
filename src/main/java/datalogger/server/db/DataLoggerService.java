@@ -15,7 +15,7 @@ import javax.persistence.Query;
  *
  * @author lars
  */
-public class TestService extends PersistingService {
+public class DataLoggerService extends PersistingService {
 
     public Unit getUnit(final int id) throws TransactionJobException {
         return getUnit(id, true);
@@ -79,6 +79,24 @@ public class TestService extends PersistingService {
             return ld;
         } catch (NoResultException ex) {
             return new LogData();
+        }
+    }
+
+    public LogData saveLogData(LogData ld) throws TransactionJobException {
+        isInTransaction();
+
+        Date now = new Date();
+	if ( ld.getTstamp() == null )
+	    ld.setTstamp(now);
+	
+        if (ld.getId() == null) {
+            em.persist(ld);
+            em.flush();
+            return ld;
+        } else {
+            final LogData mld = em.merge(ld);
+            em.flush();
+            return mld;
         }
     }
 }
