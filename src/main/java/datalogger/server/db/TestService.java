@@ -5,6 +5,7 @@
  */
 package datalogger.server.db;
 
+import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.Unit;
 import java.util.Date;
 import javax.persistence.NoResultException;
@@ -16,11 +17,11 @@ import javax.persistence.Query;
  */
 public class TestService extends PersistingService {
 
-    public Unit getSettingsData(final int id) throws TransactionJobException {
-        return getSettingsData(id, true);
+    public Unit getUnit(final int id) throws TransactionJobException {
+        return getUnit(id, true);
     }
 
-    private Unit getSettingsData(final int id, boolean touch) throws TransactionJobException {
+    private Unit getUnit(final int id, boolean touch) throws TransactionJobException {
         isInTransaction();
         
         try {
@@ -37,7 +38,7 @@ public class TestService extends PersistingService {
         }
     }
 
-    public Unit saveSettingsData(final Unit u) throws TransactionJobException {
+    public Unit saveUnit(final Unit u) throws TransactionJobException {
         isInTransaction();
 
         Date now = new Date();
@@ -52,15 +53,32 @@ public class TestService extends PersistingService {
         }
     }
 
-    public int removeSettingsData(final int id) throws TransactionJobException {
+    public int removeUnit(final int id) throws TransactionJobException {
         isInTransaction();
 
-        Unit u = getSettingsData(id);
+        Unit u = getUnit(id);
         System.err.println("got Unit: " + u);
         if (u != null) {
             em.remove(u);
             return 1;
         }
         return 0;
+    }
+
+    public LogData getLogData(final int id, boolean touch) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select ld from LogData ld where ld.id = ?1");
+            q.setParameter(1, id);
+            LogData ld = (LogData) q.getSingleResult();
+            System.err.println("got: " + ld);
+            if (touch && ld != null) {
+                em.flush();
+            }
+            return ld;
+        } catch (NoResultException ex) {
+            return new LogData();
+        }
     }
 }

@@ -8,6 +8,7 @@ package datalogger.server;
 import datalogger.server.db.PersistingService;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.TestService;
+import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.Unit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +32,8 @@ public class Main {
 		@Override
 		public Integer perform() {
 		    try {
-			Unit u = ts.getSettingsData(3);
+			Unit u = ts.getUnit(3);
+			LogData ld = ts.getLogData(1, false);
 			return u.getId();
 		    } catch (PersistingService.TransactionJobException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

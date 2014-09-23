@@ -5,11 +5,16 @@
  */
 package datalogger.server.db.entity;
 
+import datalogger.server.util.ToString;
 import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -21,14 +26,60 @@ public class LogData implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
-    public Long getId() {
+    @Column(name = "value")
+    private double value;
+
+    @ManyToOne
+    @JoinColumn(name = "logtype_id", nullable = true)
+    private LogType logType;
+
+    @Column(name = "tstamp")
+    private Date tstamp;
+
+    @ManyToOne
+    @JoinColumn(name = "logdev_id", nullable = true)
+    private LogDevice logDev;
+
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
 	this.id = id;
+    }
+
+    public double getValue() {
+	return value;
+    }
+
+    public void setValue(double value) {
+	this.value = value;
+    }
+
+    public LogType getLogType() {
+	return logType;
+    }
+
+    public void setLogType(LogType logType) {
+	this.logType = logType;
+    }
+
+    public Date getTstamp() {
+	return tstamp;
+    }
+
+    public void setTstamp(Date tstamp) {
+	this.tstamp = tstamp;
+    }
+
+    public LogDevice getLogDev() {
+	return logDev;
+    }
+
+    public void setLogDev(LogDevice logDev) {
+	this.logDev = logDev;
     }
 
     @Override
@@ -53,7 +104,7 @@ public class LogData implements Serializable {
 
     @Override
     public String toString() {
-	return "LogData[ id=" + id + " ]";
+	return ToString.toString(this, "-serialVersionUID");
     }
 
 }

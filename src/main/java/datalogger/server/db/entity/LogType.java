@@ -5,11 +5,15 @@
  */
 package datalogger.server.db.entity;
 
+import datalogger.server.util.ToString;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -21,13 +25,36 @@ public class LogType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
+    
+    @Column(name="description")
+    private String description;
 
-    public Long getId() {
+    @ManyToOne
+    @JoinColumn(name="unit_id", nullable=true)
+    private Unit unit;
+
+    public String getDescription() {
+	return description;
+    }
+
+    public void setDescription(String description) {
+	this.description = description;
+    }
+
+    public Unit getUnit() {
+	return unit;
+    }
+
+    public void setUnit(Unit unit) {
+	this.unit = unit;
+    }
+
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
 	this.id = id;
     }
 
@@ -53,7 +80,7 @@ public class LogType implements Serializable {
 
     @Override
     public String toString() {
-	return "LogType[ id=" + id + " ]";
+	return ToString.toString(this, "-serialVersionUID");
     }
 
 }
