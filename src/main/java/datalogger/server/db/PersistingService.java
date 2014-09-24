@@ -5,10 +5,8 @@
  */
 package datalogger.server.db;
 
-import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PersistingService {

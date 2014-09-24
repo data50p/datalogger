@@ -8,7 +8,6 @@ package datalogger.server;
 import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Plain;
-import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;
 import static com.femtioprocent.propaganda.data.AddrType.anonymousAddrType;
 import static com.femtioprocent.propaganda.data.AddrType.serverAddrType;
 import com.femtioprocent.propaganda.data.Datagram;
@@ -23,7 +22,8 @@ import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
-import java.awt.TrayIcon;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -105,10 +105,16 @@ public class Main {
 
 	void start() {
 	    try {
+                String hostname = "unknown";
+                try {
+                    hostname = InetAddress.getLocalHost().getHostName();
+                } catch (UnknownHostException ex) {
+                }
 		sendMsg(new Datagram(anonymousAddrType,
 			serverAddrType,
 			register,
-			new Message("dl@DATALOGGER")));
+			new Message("dl-" + hostname
+                                + "@DATALOGGER")));
 		for (;;) {
 		    Datagram datagram = getConnector().recvMsg();
 		    S.pL("Connector_Plain.Main got: " + datagram);
