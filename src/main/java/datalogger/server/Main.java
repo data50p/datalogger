@@ -127,15 +127,20 @@ public class Main {
 			if ("log".equals(msg)) {
 			    // log add <dev> <type> <value>
 			    if (msgArr.length == 4 && msgArr[0].equals("add")) {
-				Double val = Double.parseDouble(msgArr[3]);
-				int id = log(msgArr[1], msgArr[2], val);
-				Message rmsg;
-				if (id == 0) {
-				    rmsg = new Message("logged", "NOT added");
-				} else {
-				    rmsg = new Message("logged", "added id " + id);
+				try {
+				    Double val = Double.parseDouble(msgArr[3].replace(",", "."));
+				    int id = log(msgArr[1], msgArr[2], val);
+				    Message rmsg;
+				    if (id == 0) {
+					rmsg = new Message("logged", "NOT added");
+				    } else {
+					rmsg = new Message("logged", "added id " + id);
+				    }
+				    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+				} catch (Exception ex) {
+				    Message rmsg = new Message("logged", "NOT added " + ex);
+				    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
 				}
-				sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
 			    } else {
 				Message rmsg = new Message("error", "format");
 				sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
