@@ -20,7 +20,10 @@ import datalogger.server.db.PersistingService;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.DataLoggerService;
 import datalogger.server.db.entity.LogData;
+import datalogger.server.db.entity.LogDevice;
+import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
+import java.awt.TrayIcon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +63,7 @@ public class Main {
 	}
     }
 
-    private void log(String dev, String val) {
+    private int log(String dev, String type, double val) {
 	try {
 	    DataLoggerService dls = new DataLoggerService();
 
@@ -69,21 +72,29 @@ public class Main {
 		public Integer perform() {
 		    try {
 			Unit u = dls.getUnit(3);
-			LogData ld = new LogData();
-			ld.setValue(Double.parseDouble(val));
-			ld = dls.saveLogData(ld);
-			System.err.println("saved: " + ld);
-			return u.getId();
+
+			LogDevice ldev = dls.getLogDevice(dev);
+			LogType ltyp = dls.getLogType(type);
+
+			if (ldev != null && ltyp != null) {
+			    LogData ld = new LogData(ldev, ltyp, val);
+			    ld = dls.saveLogData(ld);
+			    System.err.println("saved: " + ld);
+			    return ld.getId();
+			}
+			return 0;
 		    } catch (PersistingService.TransactionJobException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		    }
 		    return null;
 		}
 	    });
-	    System.out.println("sd " + n);
+	    System.out.println("sd id: " + n);
+	    return n == null ? -1 : n;
 	} catch (PersistingService.TransactionJobException ex) {
 	    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 	}
+	return -1;
     }
 
     class MainClient extends PropagandaClient {
@@ -114,7 +125,16 @@ public class Main {
 			String msg = datagram.getMessage().getMessage();
 			String msgArr[] = datagram.getMessage().getAddendum().split(" ");
 			if ("log".equals(msg)) {
-			    log("testdev", "321.123");
+			    // log add <dev> <type> <value>
+			    if (msgArr.length == 4 && msgArr[0].equals("add")) {
+				Double val = Double.parseDouble(msgArr[3]);
+				int id = log(msgArr[1], msgArr[2], val);
+				Message rmsg = new Message("logged", "added id " + id);
+				sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+			    } else {
+				Message rmsg = new Message("error", "format");
+				sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+			    }
 			}
 		    } else {
 			System.err.println("got datagram: _ " + name + " =----> " + datagram);

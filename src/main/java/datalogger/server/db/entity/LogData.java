@@ -42,6 +42,21 @@ public class LogData implements Serializable {
     @JoinColumn(name = "logdev_id", nullable = true)
     private LogDevice logDev;
 
+    public LogData() {
+    }
+
+    public LogData(LogDevice logDev, LogType logType) {
+	this.logDev = logDev;
+	this.logType = logType;
+    }
+
+    public LogData(LogDevice logDev, LogType logType, double value) {
+	this.logDev = logDev;
+	this.logType = logType;
+	this.value = value;
+    }
+
+    
     public Integer getId() {
 	return id;
     }

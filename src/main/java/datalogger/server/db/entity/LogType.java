@@ -27,12 +27,23 @@ public class LogType implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     
+    @Column(name="name")
+    private String name;
+
     @Column(name="description")
     private String description;
 
     @ManyToOne
     @JoinColumn(name="unit_id", nullable=true)
     private Unit unit;
+
+    public String getName() {
+	return name;
+    }
+
+    public void setName(String name) {
+	this.name = name;
+    }
 
     public String getDescription() {
 	return description;

@@ -6,6 +6,8 @@
 package datalogger.server.db;
 
 import datalogger.server.db.entity.LogData;
+import datalogger.server.db.entity.LogDevice;
+import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
 import java.util.Date;
 import javax.persistence.NoResultException;
@@ -34,7 +36,7 @@ public class DataLoggerService extends PersistingService {
             }
             return u;
         } catch (NoResultException ex) {
-            return new Unit();
+            return null;
         }
     }
 
@@ -78,7 +80,7 @@ public class DataLoggerService extends PersistingService {
             }
             return ld;
         } catch (NoResultException ex) {
-            return new LogData();
+            return null;
         }
     }
 
@@ -97,6 +99,34 @@ public class DataLoggerService extends PersistingService {
             final LogData mld = em.merge(ld);
             em.flush();
             return mld;
+        }
+    }
+
+    public LogDevice getLogDevice(String devName) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select ld from LogDevice ld where ld.name = ?1");
+            q.setParameter(1, devName);
+            LogDevice ld = (LogDevice) q.getSingleResult();
+            System.err.println("got: " + ld);
+            return ld;
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    public LogType getLogType(String typeName) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select lt from LogType lt where lt.name = ?1");
+            q.setParameter(1, typeName);
+            LogType lt = (LogType) q.getSingleResult();
+            System.err.println("got: " + lt);
+            return lt;
+        } catch (NoResultException ex) {
+            return null;
         }
     }
 }
