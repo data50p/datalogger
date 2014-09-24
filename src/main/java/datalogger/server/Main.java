@@ -129,7 +129,12 @@ public class Main {
 			    if (msgArr.length == 4 && msgArr[0].equals("add")) {
 				Double val = Double.parseDouble(msgArr[3]);
 				int id = log(msgArr[1], msgArr[2], val);
-				Message rmsg = new Message("logged", "added id " + id);
+				Message rmsg;
+				if (id == 0) {
+				    rmsg = new Message("logged", "NOT added");
+				} else {
+				    rmsg = new Message("logged", "added id " + id);
+				}
 				sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
 			    } else {
 				Message rmsg = new Message("error", "format");

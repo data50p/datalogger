@@ -4,7 +4,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>datalogger.server.db.entity.NewEntity</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://xider.local:3306/datalogger?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://db.femtioprocent.com:3306/datalogger?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="lars50p"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="kaffe1"/>
