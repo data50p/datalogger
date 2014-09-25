@@ -31,6 +31,9 @@ public class LogData implements Serializable {
     @Column(name = "value")
     private double value;
 
+    @Column(name = "svalue")
+    private String svalue;
+
     @ManyToOne
     @JoinColumn(name = "logtype_id", nullable = true)
     private LogType logType;
@@ -56,6 +59,12 @@ public class LogData implements Serializable {
 	this.value = value;
     }
 
+    public LogData(LogDevice logDev, LogType logType, String svalue) {
+	this.logDev = logDev;
+	this.logType = logType;
+	this.svalue = svalue;
+    }
+
     
     public Integer getId() {
 	return id;
@@ -71,6 +80,14 @@ public class LogData implements Serializable {
 
     public void setValue(double value) {
 	this.value = value;
+    }
+
+    public String getSvalue() {
+	return svalue;
+    }
+
+    public void setSvalue(String svalue) {
+	this.svalue = svalue;
     }
 
     public LogType getLogType() {
