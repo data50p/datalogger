@@ -50,7 +50,7 @@ public class Main extends Appl {
 
     private void test() {
 	try {
-	    DataLoggerService dls = new DataLoggerService();
+	    final DataLoggerService dls = new DataLoggerService();
 
 	    Integer n = dls.withTransaction(new TransactionJob<Integer>() {
 		@Override
@@ -71,9 +71,9 @@ public class Main extends Appl {
 	}
     }
 
-    private int log(String dev, String type, double val) {
+    private int log(final String dev, final String type, final double val) {
 	try {
-	    DataLoggerService dls = new DataLoggerService();
+	    final DataLoggerService dls = new DataLoggerService();
 
 	    Integer n = dls.withTransaction(new TransactionJob<Integer>() {
 		@Override
@@ -108,7 +108,7 @@ public class Main extends Appl {
     class MainClient extends PropagandaClient {
 
 	MainClient() {
-	    super("MainClient");
+	    super("DataloggerClient");
 	}
 
 	void start() {
@@ -173,7 +173,7 @@ public class Main extends Appl {
     private void init() {
 	final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "DataLoggerServer", null, null);
 //        Connector_Plain conn = new Connector_Plain("MainPlain");
-	MainClient client = new MainClient();
+	final MainClient client = new MainClient();
 	System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
 	if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
