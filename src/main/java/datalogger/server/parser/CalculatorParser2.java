@@ -37,15 +37,15 @@ public class CalculatorParser2 extends CalculatorParser<CalcNode> {
 
     @Override
     public Rule InputLine() {
-        return Sequence(Expression(), EOI);
+        return sequence(Expression(), EOI);
     }
 
     public Rule Expression() {
         Var<Character> op = new Var<Character>(); // we use an action variable to hold the operator character
-        return Sequence(
+        return sequence(
                 Term(),
-                ZeroOrMore(
-                        AnyOf("+-"),
+                zeroOrMore(
+                        anyOf("+-"),
                         op.set(matchedChar()), // set the action variable to the matched operator char
                         Term(),
 
@@ -60,10 +60,10 @@ public class CalculatorParser2 extends CalculatorParser<CalcNode> {
 
     public Rule Term() {
         Var<Character> op = new Var<Character>(); // we use an action variable to hold the operator character
-        return Sequence(
+        return sequence(
                 Factor(),
-                ZeroOrMore(
-                        AnyOf("*/"),
+                zeroOrMore(
+                        anyOf("*/"),
                         op.set(matchedChar()), // set the action variable to the matched operator char
                         Factor(),
 
@@ -77,15 +77,15 @@ public class CalculatorParser2 extends CalculatorParser<CalcNode> {
     }
 
     public Rule Factor() {
-        return FirstOf(Number(), Parens());
+        return firstOf(Number(), Parens());
     }
 
     public Rule Parens() {
-        return Sequence('(', Expression(), ')');
+        return sequence('(', Expression(), ')');
     }
 
     public Rule Number() {
-        return Sequence(
+        return sequence(
                 Digits(),
 
                 // parse the input text matched by the preceding "Digits" rule,
@@ -97,11 +97,11 @@ public class CalculatorParser2 extends CalculatorParser<CalcNode> {
 
     @SuppressSubnodes
     public Rule Digits() {
-        return OneOrMore(Digit());
+        return oneOrMore(Digit());
     }
 
     public Rule Digit() {
-        return CharRange('0', '9');
+        return charRange('0', '9');
     }
 
     //****************************************************************

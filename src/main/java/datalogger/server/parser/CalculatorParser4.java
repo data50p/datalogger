@@ -20,15 +20,15 @@ public class CalculatorParser4 extends CalculatorParser<CalcNode> {
 
     @Override
     public Rule InputLine() {
-        return Sequence(Expression(), EOI);
+        return sequence(Expression(), EOI);
     }
 
     public Rule Expression() {
-        return OperatorRule(Term(), FirstOf("+ ", "- "));
+        return OperatorRule(Term(), firstOf("+ ", "- "));
     }
 
     public Rule Term() {
-        return OperatorRule(Factor(), FirstOf("* ", "/ "));
+        return OperatorRule(Factor(), firstOf("* ", "/ "));
     }
 
     public Rule Factor() {
@@ -38,9 +38,9 @@ public class CalculatorParser4 extends CalculatorParser<CalcNode> {
 
     public Rule OperatorRule(Rule subRule, Rule operatorRule) {
         Var<String> op = new Var<String>();
-        return Sequence(
+        return sequence(
                 subRule,
-                ZeroOrMore(
+                zeroOrMore(
                         operatorRule, op.set(""+matchedChar()),
                         subRule,
                         push(new CalcNode(op.get(), pop(1), pop()))
@@ -49,31 +49,31 @@ public class CalculatorParser4 extends CalculatorParser<CalcNode> {
     }
 
     public Rule Atom() {
-        return FirstOf(Number(), Function(), Parens());
+        return firstOf(Number(), Function(), Parens());
     }
 
     public Rule Function() {
-        return FirstOf(SquareRoot(), Fun());
+        return firstOf(SquareRoot(), Fun());
     }
 
     public Rule SquareRoot() {
-        return Sequence("SQRT", Parens(), push(new CalcNode("R", pop(), null)));
+        return sequence("SQRT", Parens(), push(new CalcNode("R", pop(), null)));
     }
 
     public Rule Fun() {
-        return Sequence("FUN", Parens(), push(new CalcNode("fun", pop(), null)));
+        return sequence("FUN", Parens(), push(new CalcNode("fun", pop(), null)));
     }
 
     public Rule Parens() {
-        return Sequence("( ", Expression(), ") ");
+        return sequence("( ", Expression(), ") ");
     }
 
     public Rule Number() {
-        return Sequence(
-                Sequence(
-                        Optional(Ch('-')),
-                        OneOrMore(Digit()),
-                        Optional(Ch('.'), OneOrMore(Digit()))
+        return sequence(
+                sequence(
+                        optional(ch('-')),
+                        oneOrMore(Digit()),
+                        optional(ch('.'), oneOrMore(Digit()))
                 ),
                 // the action uses a default string in case it is run during error recovery (resynchronization)
                 push(new CalcNode(Double.parseDouble(matchOrDefault("0")))),
@@ -82,11 +82,11 @@ public class CalculatorParser4 extends CalculatorParser<CalcNode> {
     }
 
     public Rule Digit() {
-        return CharRange('0', '9');
+        return charRange('0', '9');
     }
 
     public Rule WhiteSpace() {
-        return ZeroOrMore(AnyOf(" \t\f"));
+        return zeroOrMore(anyOf(" \t\f"));
     }
 
     // we redefine the rule creation for string literals to automatically match trailing whitespace if the string
@@ -95,8 +95,8 @@ public class CalculatorParser4 extends CalculatorParser<CalcNode> {
     @Override
     protected Rule fromStringLiteral(String string) {
         return string.endsWith(" ") ?
-                Sequence(String(string.substring(0, string.length() - 1)), WhiteSpace()) :
-                String(string);
+                sequence(string(string.substring(0, string.length() - 1)), WhiteSpace()) :
+                string(string);
     }
 
     //**************** MAIN ****************

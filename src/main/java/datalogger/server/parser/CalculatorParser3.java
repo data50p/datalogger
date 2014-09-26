@@ -21,17 +21,17 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
 
     @Override
     public Rule InputLine() {
-	return Sequence(Expression(), EOI);
+	return sequence(Expression(), EOI);
     }
 
     Rule Expression() {
 	Var<String> op = new Var<String>();
-	return Sequence(
+	return sequence(
 		Term(),
-		ZeroOrMore(
-			// we use a FirstOf(String, String) instead of a AnyOf(String) so we can use the
+		zeroOrMore(
+			// we use a firstOf(String, String) instead of a anyOf(String) so we can use the
 			// fromStringLiteral transformation (see below), which automatically consumes trailing whitespace
-			FirstOf("+ ", "- "), op.set(""+matchedChar()),
+			firstOf("+ ", "- "), op.set(""+matchedChar()),
 			Term(),
 			// same as in CalculatorParser2
 			push(new CalcNode(op.get(), pop(1), pop()))
@@ -41,10 +41,10 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
 
     Rule Term() {
 	Var<String> op = new Var<String>();
-	return Sequence(
+	return sequence(
 		Factor(),
-		ZeroOrMore(
-			FirstOf("* ", "/ "), op.set(""+matchedChar()),
+		zeroOrMore(
+			firstOf("* ", "/ "), op.set(""+matchedChar()),
 			Factor(),
 			push(new CalcNode(op.get(), pop(1), pop()))
 		)
@@ -52,9 +52,9 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     }
 
     Rule Factor() {
-	return Sequence(
+	return sequence(
 		Atom(),
-		ZeroOrMore(
+		zeroOrMore(
 			"^ ",
 			Atom(),
 			push(new CalcNode("^", pop(1), pop()))
@@ -63,11 +63,11 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     }
 
     Rule Atom() {
-	return FirstOf(Number(), Fun(), SquareRoot(), Parens());
+	return firstOf(Number(), Fun(), SquareRoot(), Parens());
     }
 
     Rule SquareRoot() {
-	return Sequence(
+	return sequence(
 		"SQRT ",
 		Parens(),
 		// create a new AST node with a special operator 'R' and only one child
@@ -76,7 +76,7 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     }
 
     Rule Fun() {
-	return Sequence(
+	return sequence(
 		"FUN ",
 		Parens(),
 		// create a new AST node with a special operator 'R' and only one child
@@ -85,17 +85,17 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     }
 
     Rule Parens() {
-	return Sequence("( ", Expression(), ") ");
+	return sequence("( ", Expression(), ") ");
     }
 
     Rule Number() {
-	return Sequence(
-		// we use another Sequence in the "Number" Sequence so we can easily access the input text matched
+	return sequence(
+		// we use another sequence in the "Number" sequence so we can easily access the input text matched
 		// by the three enclosed rules with "match()" or "matchOrDefault()"
-		Sequence(
-			Optional('-'),
-			OneOrMore(Digit()),
-			Optional('.', OneOrMore(Digit()))
+		sequence(
+			optional('-'),
+			oneOrMore(Digit()),
+			optional('.', oneOrMore(Digit()))
 		),
 		// the matchOrDefault() call returns the matched input text of the immediately preceding rule
 		// or a default string (in this case if it is run during error recovery (resynchronization))
@@ -105,11 +105,11 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     }
 
     Rule Digit() {
-	return CharRange('0', '9');
+	return charRange('0', '9');
     }
 
     Rule WhiteSpace() {
-	return ZeroOrMore(AnyOf(" \t\f"));
+	return zeroOrMore(anyOf(" \t\f"));
     }
 
     // we redefine the rule creation for string literals to automatically match trailing whitespace if the string
@@ -118,8 +118,8 @@ public class CalculatorParser3 extends CalculatorParser<CalcNode> {
     @Override
     protected Rule fromStringLiteral(String string) {
 	return string.endsWith(" ")
-		? Sequence(String(string.substring(0, string.length() - 1)), WhiteSpace())
-		: String(string);
+		? sequence(string(string.substring(0, string.length() - 1)), WhiteSpace())
+		: string(string);
     }
 
     //****************************************************************

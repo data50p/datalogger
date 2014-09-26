@@ -34,53 +34,53 @@ public class CalculatorParser1 extends CalculatorParser<Integer> {
 
     @Override
     public Rule InputLine() {
-        return Sequence(Expression(), EOI);
+        return sequence(Expression(), EOI);
     }
 
     public Rule Expression() {
-        return Sequence(
+        return sequence(
                 Term(), // a successful match of a Term pushes one Integer value onto the value stack
-                ZeroOrMore(
-                        FirstOf(
+                zeroOrMore(
+                        firstOf(
                                 // the action that is run after the '+' and the Term have been matched consumes the
                                 // two top value stack elements and replaces them with the calculation result
-                                Sequence('+', Term(), push(pop() + pop())),
+                                sequence('+', Term(), push(pop() + pop())),
 
                                 // same for the '-' operator, however, here the order of the "pop"s matters, we need to
                                 // retrieve the second to last value first, which is what the pop(1) call does
-                                Sequence('-', Term(), push(pop(1) - pop()))
+                                sequence('-', Term(), push(pop(1) - pop()))
                         )
                 )
         );
     }
 
     public Rule Term() {
-        return Sequence(
+        return sequence(
                 Factor(), // a successful match of a Factor pushes one Integer value onto the value stack
-                ZeroOrMore(
-                        FirstOf(
+                zeroOrMore(
+                        firstOf(
                                 // the action that is run after the '*' and the Factor have been matched consumes the
                                 // two top value stack elements and replaces them with the calculation result
-                                Sequence('*', Factor(), push(pop() * pop())),
+                                sequence('*', Factor(), push(pop() * pop())),
 
                                 // same for the '/' operator, however, here the order of the "pop"s matters, we need to
                                 // retrieve the second to last value first, which is what the pop(1) call does
-                                Sequence('/', Factor(), push(pop(1) / pop()))
+                                sequence('/', Factor(), push(pop(1) / pop()))
                         )
                 )
         );
     }
 
     public Rule Factor() {
-        return FirstOf(Number(), Parens()); // a factor "produces" exactly one Integer value on the value stack
+        return firstOf(Number(), Parens()); // a factor "produces" exactly one Integer value on the value stack
     }
 
     public Rule Parens() {
-        return Sequence('(', Expression(), ')');
+        return sequence('(', Expression(), ')');
     }
 
     public Rule Number() {
-        return Sequence(
+        return sequence(
                 Digits(),
 
                 // parse the input text matched by the preceding "Digits" rule,
@@ -92,11 +92,11 @@ public class CalculatorParser1 extends CalculatorParser<Integer> {
 
     @SuppressSubnodes
     public Rule Digits() {
-        return OneOrMore(Digit());
+        return oneOrMore(Digit());
     }
 
     public Rule Digit() {
-        return CharRange('0', '9');
+        return charRange('0', '9');
     }
 
     //**************** MAIN ****************
