@@ -43,6 +43,16 @@ public class Unit implements Serializable {
     @Column(name="base_factor")
     private Double baseFactor;
 
+    public Unit() {	
+    }
+
+    public Unit(String name, String description, Unit baseUnit, double baseFactor) {
+	this.name = name;
+	this.description = description;
+	this.baseUnit = baseUnit;
+	this.baseFactor = baseFactor;
+    }
+    
     public Integer getId() {
 	return id;
     }
@@ -106,6 +116,10 @@ public class Unit implements Serializable {
     @Override
     public String toString() {
 	return ToString.toString(this, "-serialVersionUID");
+    }
+
+    public boolean newInstance() {
+	return id == null || id == 0;
     }
 
 }

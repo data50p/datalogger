@@ -10,6 +10,7 @@ import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -44,7 +45,7 @@ public class DataLoggerService extends PersistingService {
         isInTransaction();
 
         Date now = new Date();
-        if (u.getId() == 0) {
+        if (u.newInstance()) {
             em.persist(u);
             em.flush();
             return u;
@@ -128,5 +129,32 @@ public class DataLoggerService extends PersistingService {
         } catch (NoResultException ex) {
             return null;
         }
+    }
+
+    List<Unit> getAllUnits() throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select u from Unit u");
+            List<Unit> rs = (List<Unit>) q.getResultList();
+            System.err.println("got: " + rs);
+            return rs;
+        } catch (NoResultException ex) {
+            return null;
+        }	
+    }
+
+    Unit getUnitByName(String name) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select u from Unit u where u.name = ?1");
+	    q.setParameter(1, name);
+            Unit u = (Unit) q.getSingleResult();
+            System.err.println("got: " + u);
+            return u;
+        } catch (NoResultException ex) {
+            return null;
+        }	
     }
 }

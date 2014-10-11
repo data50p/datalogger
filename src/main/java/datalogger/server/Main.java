@@ -18,6 +18,7 @@ import com.femtioprocent.propaganda.data.Message;
 import com.femtioprocent.propaganda.data.MessageType;
 import static com.femtioprocent.propaganda.data.MessageType.register;
 import com.femtioprocent.propaganda.exception.PropagandaException;
+import datalogger.server.db.BootstrapDB;
 import datalogger.server.db.PersistingService;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.DataLoggerService;
@@ -45,8 +46,14 @@ public class Main extends Appl {
 
     @Override
     public void main() {
-	test();
-	init();
+	if (Appl.flags.get("bootstrap") != null) {
+	    BootstrapDB b = new BootstrapDB();
+	    b.update();
+	    System.exit(0);
+	} else {
+	    test();
+	    init();
+	}
     }
 
     private void test() {
