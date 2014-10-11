@@ -37,6 +37,15 @@ public class LogType implements Serializable {
     @JoinColumn(name="unit_id", nullable=true)
     private Unit unit;
 
+    public LogType() {
+    }
+    
+    public LogType(String name, String description, Unit unit) {
+	this.name = name;
+	this.description = description;
+	this.unit = unit;
+    }
+
     public String getName() {
 	return name;
     }

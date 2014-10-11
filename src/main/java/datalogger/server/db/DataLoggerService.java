@@ -157,4 +157,60 @@ public class DataLoggerService extends PersistingService {
             return null;
         }	
     }
+
+    LogType getLogTypeByName(String name) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select t from LogType t where t.name = ?1");
+	    q.setParameter(1, name);
+            LogType t = (LogType) q.getSingleResult();
+            System.err.println("got: " + t);
+            return t;
+        } catch (NoResultException ex) {
+            return null;
+        }	
+    }
+
+    LogDevice getLogDeviceByName(String name) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select d from LogDevice d where d.name = ?1");
+	    q.setParameter(1, name);
+            LogDevice d = (LogDevice) q.getSingleResult();
+            System.err.println("got: " + d);
+            return d;
+        } catch (NoResultException ex) {
+            return null;
+        }	
+    }
+
+    LogType saveLogType(LogType nt) throws TransactionJobException {
+        isInTransaction();
+
+        if (nt.getId() == null) {
+            em.persist(nt);
+            em.flush();
+            return nt;
+        } else {
+            final LogType mnt = em.merge(nt);
+            em.flush();
+            return mnt;
+        }
+    }
+
+    LogDevice saveLogDevice(LogDevice nd) throws TransactionJobException {
+        isInTransaction();
+
+        if (nd.getId() == null) {
+            em.persist(nd);
+            em.flush();
+            return nd;
+        } else {
+            final LogDevice mnd = em.merge(nd);
+            em.flush();
+            return mnd;
+        }
+    }
 }

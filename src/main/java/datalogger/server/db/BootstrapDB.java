@@ -8,6 +8,8 @@ package datalogger.server.db;
 import datalogger.server.Main;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.entity.LogData;
+import datalogger.server.db.entity.LogDevice;
+import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,13 +21,28 @@ import java.util.logging.Logger;
  */
 public class BootstrapDB {
 
-    String bootstrapUnits[][] = new String[][] {
+    String bootstrapUnits[][] = new String[][]{
 	{"", "identity", null, "1.0"},
+	{"*", "Any", null, "1.0"},
+	{"B", "boolean", null, "1.0"},
+	{"I", "counter", null, "1.0"},
+	{"D", "number", null, "1.0"},
+	{"S", "alpha-numeric", null, "1.0"},
 	{"m", "length", null, "1.0"},
 	{"mm", "length", "m", "0.001"},
 	{"°", "temp", null, "1.0"},
     };
     
+    String bootstrapTypes[][] = new String[][]{
+	{"test", "Test any", "*"},
+	{"ute-temp", "temp outside", "°"},
+    };
+
+    String bootstrapDevs[][] = new String[][]{
+	{"unknown", "unknown"},
+	{"ute1", "ute sovrummet"},
+    };
+
     public void update() {
 	try {
 	    final DataLoggerService dls = new DataLoggerService();
@@ -35,19 +52,33 @@ public class BootstrapDB {
 		public Integer perform() {
 		    try {
 			int n = 0;
-			for(String[] bu : bootstrapUnits) {
+			for (String[] bu : bootstrapUnits) {
 			    final Unit u = dls.getUnitByName(bu[0]);
-			    if ( u == null ) {
-				final Unit bUnit = bu[2] == null ? null : dls.getUnitByName(bu[2]);				
+			    if (u == null) {
+				final Unit bUnit = bu[2] == null ? null : dls.getUnitByName(bu[2]);
 				Unit nu = new Unit(bu[0], bu[1], bUnit, Double.parseDouble(bu[3]));
 				dls.saveUnit(nu);
 			    }
 			}
+			for (String[] bt : bootstrapTypes) {
+			    final LogType t = dls.getLogTypeByName(bt[0]);
+			    if (t == null) {
+				final Unit bUnit = bt[2] == null ? null : dls.getUnitByName(bt[2]);
+				LogType nt = new LogType(bt[0], bt[1], bUnit);
+				dls.saveLogType(nt);
+			    }
+			}
+			for (String[] bt : bootstrapDevs) {
+			    final LogDevice t = dls.getLogDeviceByName(bt[0]);
+			    if (t == null) {
+				LogDevice nt = new LogDevice(bt[0], bt[1]);
+				dls.saveLogDevice(nt);
+			    }
+			}
 			List<Unit> allUnits = dls.getAllUnits();
-			for(Unit u : allUnits) {
+			for (Unit u : allUnits) {
 			    System.err.println("Found: " + u);
 			}
-			
 			return n;
 		    } catch (PersistingService.TransactionJobException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
