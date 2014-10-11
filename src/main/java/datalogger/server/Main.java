@@ -5,7 +5,7 @@
  */
 package datalogger.server;
 
-import com.femtioprocent.fpd.sundry.Appl;
+import com.femtioprocent.fpd.appl.Appl;
 import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Plain;
