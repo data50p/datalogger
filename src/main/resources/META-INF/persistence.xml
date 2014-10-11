@@ -4,11 +4,12 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>datalogger.server.db.entity.NewEntity</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://db.femtioprocent.com:3306/datalogger?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="lars50p"/>
-      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="kaffe1"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://xider.local:5432/datalogger" /> <!--jdbc:derby://localhost:1527/sample"/> -->
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" /> <!-- value="org.apache.derby.jdbc.ClientDriver"/> -->
+      <property name="javax.persistence.jdbc.password" value="elefant"/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>
