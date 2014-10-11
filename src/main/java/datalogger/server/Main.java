@@ -89,8 +89,8 @@ public class Main extends Appl {
 		    try {
 			Unit u = dls.getUnit(3);
 
-			LogDevice ldev = dls.getLogDevice(dev);
-			LogType ltyp = dls.getLogType(type);
+			LogDevice ldev = dls.getLogDeviceByName(dev);
+			LogType ltyp = dls.getLogTypeByName(type);
 
 			if (ldev != null && ltyp != null) {
 			    LogData ld = new LogData(ldev, ltyp, val);

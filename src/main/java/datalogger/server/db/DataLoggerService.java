@@ -103,7 +103,7 @@ public class DataLoggerService extends PersistingService {
         }
     }
 
-    public LogDevice getLogDevice(String devName) throws TransactionJobException {
+    public LogDevice getLogDeviceByName(String devName) throws TransactionJobException {
         isInTransaction();
         
         try {
@@ -117,7 +117,7 @@ public class DataLoggerService extends PersistingService {
         }
     }
 
-    public LogType getLogType(String typeName) throws TransactionJobException {
+    public LogType getLogTypeByName(String typeName) throws TransactionJobException {
         isInTransaction();
         
         try {
@@ -153,34 +153,6 @@ public class DataLoggerService extends PersistingService {
             Unit u = (Unit) q.getSingleResult();
             System.err.println("got: " + u);
             return u;
-        } catch (NoResultException ex) {
-            return null;
-        }	
-    }
-
-    LogType getLogTypeByName(String name) throws TransactionJobException {
-        isInTransaction();
-        
-        try {
-            Query q = em.createQuery("select t from LogType t where t.name = ?1");
-	    q.setParameter(1, name);
-            LogType t = (LogType) q.getSingleResult();
-            System.err.println("got: " + t);
-            return t;
-        } catch (NoResultException ex) {
-            return null;
-        }	
-    }
-
-    LogDevice getLogDeviceByName(String name) throws TransactionJobException {
-        isInTransaction();
-        
-        try {
-            Query q = em.createQuery("select d from LogDevice d where d.name = ?1");
-	    q.setParameter(1, name);
-            LogDevice d = (LogDevice) q.getSingleResult();
-            System.err.println("got: " + d);
-            return d;
         } catch (NoResultException ex) {
             return null;
         }	

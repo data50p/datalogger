@@ -31,7 +31,7 @@ public class LogData implements Serializable {
     @Column(name = "value")
     private double value;
 
-    @Column(name = "svalue")
+    @Column(name = "svalue", length = 255)
     private String svalue;
 
     @ManyToOne

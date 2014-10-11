@@ -30,10 +30,10 @@ public class Unit implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name="name")
+    @Column(name="name", length = 40)
     private String name;
 
-    @Column(name="description")
+    @Column(name="description", length = 100)
     private String description;
 
     @ManyToOne
