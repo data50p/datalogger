@@ -7,88 +7,88 @@
     <packaging>jar</packaging>
     
     <repositories>
-	<repository>
-	    <id>unknown-jars-temp-repo</id>
-	    <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
-	    <url>file:${project.basedir}/lib</url>
-	</repository>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
     </repositories>
     
     <build>
-	<plugins>
-	    <plugin>
-		<artifactId>maven-assembly-plugin</artifactId>
-		<configuration>
-		    <archive>
-			<manifest>
-			    <mainClass>datalogger.server.Main</mainClass>
-			</manifest>
-			<manifestEntries>
-			</manifestEntries>
-		    </archive>
-		    <descriptors>
-			<descriptor>src/assemble/jexec.xml</descriptor>
-		    </descriptors>
-		</configuration>
-	    </plugin>
-	</plugins>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>datalogger.server.Main</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                        </manifestEntries>
+                    </archive>
+                    <descriptors>
+                        <descriptor>src/assemble/jexec.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
-	<dependency>
-	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-entitymanager</artifactId>
-	    <version>4.3.1.Final</version>
-	</dependency>
-	<dependency>
-	    <groupId>unknown.binary</groupId>
-	    <artifactId>hibernate-jpamodelgen-4.3.1.Final</artifactId>
-	    <version>SNAPSHOT</version>
-	    <scope>provided</scope>
-	</dependency>
         <dependency>
-	<groupId>postgresql</groupId>
-	<artifactId>postgresql</artifactId>
-	<version>9.1-901-1.jdbc4</version>
-</dependency>
-	<dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.6</version>	
-	</dependency>
-	<dependency>
-	    <groupId>com.femtioprocent</groupId>
-	    <artifactId>propaganda</artifactId>
-	    <version>0.1.5.1-SNAPSHOT</version>	
-	</dependency>
-	<dependency>
-	    <groupId>com.femtioprocent</groupId>
-	    <artifactId>fpd</artifactId>
-	    <version>0.1.0.0-SNAPSHOT</version>
-	</dependency>
-	<!-- - ->
-		<!- - older, continued in grappa - ->
-		<dependency>
-		    <groupId>org.parboiled</groupId>
-		    <artifactId>parboiled-java</artifactId>
-		    <version>1.1.6</version>
-		</dependency>
-	<!- - -->
-	<dependency>
-	    <groupId>com.github.parboiled1</groupId>
-	    <artifactId>grappa</artifactId>
-	    <version>1.0.0-beta.9</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.assertj</groupId>
-	    <artifactId>assertj-core</artifactId>
-	    <version>1.6.1</version>
-	    <scope>test</scope>
-	</dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.3.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>4.3.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901-1.jdbc4</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>	
+        </dependency>
+        <dependency>
+            <groupId>com.femtioprocent</groupId>
+            <artifactId>propaganda</artifactId>
+            <version>0.1.5.1-SNAPSHOT</version>	
+        </dependency>
+        <dependency>
+            <groupId>com.femtioprocent</groupId>
+            <artifactId>fpd</artifactId>
+            <version>0.1.0.0-SNAPSHOT</version>
+        </dependency>
+        <!-- - ->
+                <!- - older, continued in grappa - ->
+                <dependency>
+                    <groupId>org.parboiled</groupId>
+                    <artifactId>parboiled-java</artifactId>
+                    <version>1.1.6</version>
+                </dependency>
+        <!- - -->
+        <dependency>
+            <groupId>com.github.parboiled1</groupId>
+            <artifactId>grappa</artifactId>
+            <version>1.0.0-beta.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<maven.compiler.source>1.8</maven.compiler.source>
-	<maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 </project>
