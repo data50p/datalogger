@@ -5,7 +5,7 @@
     <artifactId>dataloggerserver</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <repositories>
 	<repository>
 	    <id>unknown-jars-temp-repo</id>
@@ -13,9 +13,36 @@
 	    <url>file:${project.basedir}/lib</url>
 	</repository>
     </repositories>
-    
+
+
+
     <build>
 	<plugins>
+
+	    <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>build-helper-maven-plugin</artifactId>
+		<version>1.9.1</version>
+		<executions>
+		    <execution>
+			<id>attach-distribution-artifact</id>
+			<phase>package</phase>
+			<goals>
+			    <goal>attach-artifact</goal>
+			</goals>
+			<configuration>
+			    <artifacts>
+				<artifact>
+				    <file>${project.build.directory}/${project.artifactId}-${project.version}-jexec.jar</file>
+				    <type>jar</type>
+				    <classifier>jexec</classifier>
+				</artifact>
+			    </artifacts>
+			</configuration>
+		    </execution>
+		</executions>
+	    </plugin>
+
 	    <plugin>
 		<artifactId>maven-assembly-plugin</artifactId>
 		<configuration>
@@ -30,6 +57,15 @@
 			<descriptor>src/assemble/jexec.xml</descriptor>
 		    </descriptors>
 		</configuration>
+		<executions>
+		    <execution>
+			<id>attach-jexec</id>
+			<phase>package</phase>
+			<goals>
+			    <goal>assembly</goal>
+			</goals>
+		    </execution>
+		</executions>
 	    </plugin>
 	</plugins>
     </build>
@@ -54,12 +90,12 @@
 	<dependency>
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.6</version>	
+	    <version>5.1.6</version>
 	</dependency>
 	<dependency>
 	    <groupId>com.femtioprocent</groupId>
 	    <artifactId>propaganda</artifactId>
-	    <version>0.1.5.1-SNAPSHOT</version>	
+	    <version>0.1.5.1-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 	    <groupId>com.femtioprocent</groupId>
