@@ -58,6 +58,7 @@ public class BootstrapDB {
 				final Unit bUnit = bu[2] == null ? null : dls.getUnitByName(bu[2]);
 				Unit nu = new Unit(bu[0], bu[1], bUnit, Double.parseDouble(bu[3]));
 				dls.saveUnit(nu);
+                                n++;
 			    }
 			}
 			for (String[] bt : bootstrapTypes) {
@@ -66,6 +67,7 @@ public class BootstrapDB {
 				final Unit bUnit = bt[2] == null ? null : dls.getUnitByName(bt[2]);
 				LogType nt = new LogType(bt[0], bt[1], bUnit);
 				dls.saveLogType(nt);
+                                n++;
 			    }
 			}
 			for (String[] bt : bootstrapDevs) {
@@ -73,6 +75,7 @@ public class BootstrapDB {
 			    if (t == null) {
 				LogDevice nt = new LogDevice(bt[0], bt[1]);
 				dls.saveLogDevice(nt);
+                                n++;
 			    }
 			}
 			List<Unit> allUnits = dls.getAllUnits();

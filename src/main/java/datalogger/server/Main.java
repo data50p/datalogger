@@ -64,7 +64,7 @@ public class Main extends Appl {
 		@Override
 		public Integer perform() {
 		    try {
-			Unit u = dls.getUnit(3);
+			Unit u = dls.getUnitByName("mm");
 			LogData ld = dls.getLogData(1, false);
 			return u.getId();
 		    } catch (PersistingService.TransactionJobException ex) {

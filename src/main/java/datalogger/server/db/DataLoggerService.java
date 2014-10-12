@@ -131,7 +131,7 @@ public class DataLoggerService extends PersistingService {
         }
     }
 
-    List<Unit> getAllUnits() throws TransactionJobException {
+    public List<Unit> getAllUnits() throws TransactionJobException {
         isInTransaction();
         
         try {
@@ -144,7 +144,7 @@ public class DataLoggerService extends PersistingService {
         }	
     }
 
-    Unit getUnitByName(String name) throws TransactionJobException {
+    public Unit getUnitByName(String name) throws TransactionJobException {
         isInTransaction();
         
         try {
@@ -158,7 +158,7 @@ public class DataLoggerService extends PersistingService {
         }	
     }
 
-    LogType saveLogType(LogType nt) throws TransactionJobException {
+    public LogType saveLogType(LogType nt) throws TransactionJobException {
         isInTransaction();
 
         if (nt.getId() == null) {
@@ -172,7 +172,7 @@ public class DataLoggerService extends PersistingService {
         }
     }
 
-    LogDevice saveLogDevice(LogDevice nd) throws TransactionJobException {
+    public LogDevice saveLogDevice(LogDevice nd) throws TransactionJobException {
         isInTransaction();
 
         if (nd.getId() == null) {
