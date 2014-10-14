@@ -5,6 +5,7 @@
  */
 package datalogger.server.db;
 
+import datalogger.server.db.entity.LogCurrentData;
 import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
@@ -183,6 +184,34 @@ public class DataLoggerService extends PersistingService {
             final LogDevice mnd = em.merge(nd);
             em.flush();
             return mnd;
+        }
+    }
+
+    public LogCurrentData getLogCurrentData(LogType t, LogDevice d) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            Query q = em.createQuery("select lcd from LogCurrentData lcd where lcd.logType = ?1 and lcd.logDev = ?2");
+            q.setParameter(1, t);
+            q.setParameter(2, d);
+            LogCurrentData lcd = (LogCurrentData) q.getSingleResult();
+            System.err.println("got: " + lcd);
+            return lcd;
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    void save(LogCurrentData ncd) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            if ( ncd.getId() == null )
+                em.persist(ncd);
+            else
+                ncd = em.merge(ncd);
+            System.err.println("saved: " + ncd);
+        } catch (NoResultException ex) {
         }
     }
 }

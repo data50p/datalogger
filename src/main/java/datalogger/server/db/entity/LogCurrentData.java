@@ -28,15 +28,19 @@ public class LogCurrentData implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @ManyToOne
+    @JoinColumn(name = "logtype_id", nullable = false)
+    private LogType logType;
+
+    @ManyToOne
+    @JoinColumn(name = "logdev_id", nullable = false)
+    private LogDevice logDev;
+
     @Column(name = "value")
     private double value;
 
     @Column(name = "svalue")
     private String svalue;
-
-    @ManyToOne
-    @JoinColumn(name = "logtype_id", nullable = true)
-    private LogType logType;
 
     @Column(name = "tstamp")
     private Date tstamp;
@@ -44,9 +48,17 @@ public class LogCurrentData implements Serializable {
     @Column(name = "update_counter")
     private int updateCounter;
 
-    @ManyToOne
-    @JoinColumn(name = "logdev_id", nullable = true)
-    private LogDevice logDev;
+    @Column(name = "prev_value", nullable = true)
+    private Double prevValue;
+
+    @Column(name = "prev_svalue", nullable = true)
+    private String prevSvalue;
+
+    @Column(name = "prev_tstamp", nullable = true)
+    private Date prevTstamp;
+
+    @Column(name = "note", nullable = true, length = 1024)
+    private String note;
 
     public LogCurrentData() {
     }
@@ -54,18 +66,40 @@ public class LogCurrentData implements Serializable {
     public LogCurrentData(LogDevice logDev, LogType logType) {
 	this.logDev = logDev;
 	this.logType = logType;
+        this.updateCounter = 1;
+        this.tstamp = new Date();
     }
 
     public LogCurrentData(LogDevice logDev, LogType logType, double value) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.value = value;
+        this.updateCounter = 1;
+        this.tstamp = new Date();
     }
 
     public LogCurrentData(LogDevice logDev, LogType logType, String svalue) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.svalue = svalue;
+        this.updateCounter = 1;
+        this.tstamp = new Date();
+    }
+
+    public LogCurrentData(LogCurrentData prevCurrentData, LogDevice logDev, LogType logType, double value, String svalue) {
+        this(prevCurrentData, logDev, logType, value, svalue, new Date());
+    }
+    
+    public LogCurrentData(LogCurrentData prevCurrentData, LogDevice logDev, LogType logType, double value, String svalue, Date tstamp) {
+        this.id = prevCurrentData.id;
+	this.logDev = logDev;
+	this.logType = logType;
+	this.svalue = svalue;
+        this.tstamp = tstamp;
+        this.prevValue = prevCurrentData.value;
+        this.prevSvalue = prevCurrentData.svalue;
+        this.prevTstamp = prevCurrentData.tstamp;
+        this.updateCounter = prevCurrentData.updateCounter + 1;
     }
 
     
@@ -123,6 +157,42 @@ public class LogCurrentData implements Serializable {
 
     public void setLogDev(LogDevice logDev) {
 	this.logDev = logDev;
+    }
+
+    public double getPrevValue() {
+        return prevValue;
+    }
+
+    public void setPrevValue(double prevValue) {
+        this.prevValue = prevValue;
+    }
+
+    public String getPrevSvalue() {
+        return prevSvalue;
+    }
+
+    public void setPrevSvalue(String prevSvalue) {
+        this.prevSvalue = prevSvalue;
+    }
+
+    public Date getPrevTstamp() {
+        return prevTstamp;
+    }
+
+    public void setPrevTstamp(Date prevTstamp) {
+        this.prevTstamp = prevTstamp;
+    }
+
+    public void setPrevValue(Double prevValue) {
+        this.prevValue = prevValue;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     @Override

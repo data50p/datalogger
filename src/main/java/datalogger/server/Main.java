@@ -50,6 +50,10 @@ public class Main extends Appl {
 	    BootstrapDB b = new BootstrapDB();
 	    b.update();
 	    System.exit(0);
+        } else if (Appl.flags.get("test") != null) {
+	    BootstrapDB b = new BootstrapDB();
+	    b.test();
+	    System.exit(0);
 	} else {
 	    test();
 	    init();
