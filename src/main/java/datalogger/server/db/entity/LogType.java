@@ -12,15 +12,22 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
  * @author lars
  */
 @Entity
-public class LogType implements Serializable {
+@Table(name="logtype",
+    indexes = {
+        @Index(columnList = "id", name = "logtype_id_idx"),
+        @Index(columnList = "name", name = "logtype_name_idx")}
+    )
+    public class LogType implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id

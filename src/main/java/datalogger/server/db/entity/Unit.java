@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -21,8 +22,12 @@ import javax.persistence.Table;
  * @author lars
  */
 @Entity
-@Table(name = "unit")
-public class Unit implements Serializable {
+@Table(name = "unit",
+    indexes = {
+        @Index(columnList = "id", name = "unit_id_idx"),
+        @Index(columnList = "name", name = "unit_name_idx")}
+    )
+    public class Unit implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

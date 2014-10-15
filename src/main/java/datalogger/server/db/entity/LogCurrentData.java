@@ -13,15 +13,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
  * @author lars
  */
 @Entity
-public class LogCurrentData implements Serializable {
+@Table(indexes = {
+        @Index(columnList = "id", name = "logcurrentdata_id_idx"),
+        @Index(columnList = "logtype_id,logdev_id", name = "logcurrentdata_ltld_idx")}
+    )
+    public class LogCurrentData implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
