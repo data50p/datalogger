@@ -107,10 +107,10 @@ public class BootstrapDB {
                         LogCurrentData cd = dls.getLogCurrentData(t, d);
                         LogCurrentData ncd;
                         if ( cd == null ) {
-                            ncd = new LogCurrentData(d, t, "1001");
+                            ncd = new LogCurrentData(d, t, "1000");
                             ncd.setNote("This is testing");
                         } else {
-                            ncd = new LogCurrentData(cd, d, t, 0, "1001");
+                            ncd = new LogCurrentData(cd, d, t, cd.getValue() + 1, "" + (Integer.parseInt(cd.getSvalue()) + 1));
                             ncd.setNote("This is more testing");
                         }
                         dls.save(ncd);

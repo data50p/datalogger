@@ -94,6 +94,7 @@ public class LogCurrentData implements Serializable {
         this.id = prevCurrentData.id;
 	this.logDev = logDev;
 	this.logType = logType;
+	this.value = value;
 	this.svalue = svalue;
         this.tstamp = tstamp;
         this.prevValue = prevCurrentData.value;
