@@ -25,6 +25,8 @@ import javax.persistence.Table;
 @Entity
 @Table(indexes = {
         @Index(columnList = "id", name = "logdata_id_idx"),
+        @Index(columnList = "value", name = "logdata_value_idx"),
+        @Index(columnList = "tstamp", name = "logdata_tstamp_idx"),
         @Index(columnList = "logtype_id,logdev_id", name = "logdata_ltld_idx")}
     )
     public class LogData implements Serializable {
