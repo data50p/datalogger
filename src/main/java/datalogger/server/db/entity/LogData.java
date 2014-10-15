@@ -25,7 +25,7 @@ public class LogData implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "value")
@@ -34,12 +34,12 @@ public class LogData implements Serializable {
     @Column(name = "svalue", length = 255)
     private String svalue;
 
+    @Column(name = "tstamp")
+    private Date tstamp;
+
     @ManyToOne
     @JoinColumn(name = "logtype_id", nullable = true)
     private LogType logType;
-
-    @Column(name = "tstamp")
-    private Date tstamp;
 
     @ManyToOne
     @JoinColumn(name = "logdev_id", nullable = true)
