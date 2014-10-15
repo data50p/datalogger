@@ -93,7 +93,7 @@ public class BootstrapDB {
         }
     }
 
-    public void test() {
+    public void test(int loop) {
         try {
             final DataLoggerService dls = new DataLoggerService();
 
@@ -104,18 +104,20 @@ public class BootstrapDB {
                         int n = 0;
                         final LogType t = dls.getLogTypeByName("test");
                         final LogDevice d = dls.getLogDeviceByName("unknown");
-                        LogCurrentData cd = dls.getLogCurrentData(t, d);
-                        LogCurrentData ncd;
-                        if ( cd == null ) {
-                            ncd = new LogCurrentData(d, t, "1000");
-                            ncd.setNote("This is testing");
-                        } else {
-                            ncd = new LogCurrentData(cd, d, t, cd.getValue() + 1, "" + (Integer.parseInt(cd.getSvalue()) + 1));
-                            ncd.setNote("This is more testing");
+                        for (int i = 0; i < loop; i++) {
+                            LogCurrentData cd = dls.getLogCurrentData(t, d);
+                            LogCurrentData ncd;
+                            if (cd == null) {
+                                ncd = new LogCurrentData(d, t, "1000");
+                                ncd.setNote("This is testing");
+                            } else {
+                                ncd = new LogCurrentData(cd, d, t, cd.getValue() + 1, "" + (Integer.parseInt(cd.getSvalue()) + 1));
+                                ncd.setNote("This is more testing");
+                            }
+                            dls.save(ncd);
+                            LogData ld = new LogData(ncd);
+                            dls.save(ld);
                         }
-                        dls.save(ncd);
-                        LogData ld = new LogData(ncd);
-                        dls.save(ld);
                         return n;
                     } catch (PersistingService.TransactionJobException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

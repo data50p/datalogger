@@ -102,7 +102,7 @@ public class PersistingService {
 
     public void isInTransaction() throws TransactionJobException {
         if (!inTransactionJob) {
-            throw new TransactionJobException("Not called by withTransaction");
+            throw new TransactionJobException("Not called inside withTransaction");
         }
     }
 }

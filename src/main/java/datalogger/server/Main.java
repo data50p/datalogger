@@ -8,6 +8,7 @@ package datalogger.server;
 import com.femtioprocent.fpd.appl.Appl;
 import static com.femtioprocent.fpd.appl.Appl.decodeArgs;
 import com.femtioprocent.fpd.sundry.S;
+import com.femtioprocent.fpd2.util.MilliTimer;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Plain;
 import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;
@@ -52,7 +53,14 @@ public class Main extends Appl {
 	    System.exit(0);
         } else if (Appl.flags.get("test") != null) {
 	    BootstrapDB b = new BootstrapDB();
-	    b.test();
+            int loop = 1;
+            try {
+                loop = Integer.parseInt(Appl.flags.get("test"));
+            } catch (Exception _) {
+            }
+            MilliTimer mt = new MilliTimer();
+	    b.test(loop);
+            System.err.println("saving total: " + loop + ' ' + mt.getString());
 	    System.exit(0);
 	} else {
 	    test();
