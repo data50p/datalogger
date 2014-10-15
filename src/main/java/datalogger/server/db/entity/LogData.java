@@ -65,6 +65,14 @@ public class LogData implements Serializable {
 	this.svalue = svalue;
     }
 
+    public LogData(LogCurrentData lcd) {
+	this.logDev = lcd.getLogDev();
+	this.logType = lcd.getLogType();
+	this.svalue = lcd.getSvalue();
+	this.value = lcd.getValue();
+        this.tstamp = lcd.getTstamp();
+    }
+
     
     public Integer getId() {
 	return id;

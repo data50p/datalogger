@@ -201,7 +201,7 @@ public class DataLoggerService extends PersistingService {
             return null;
         }
     }
-
+    
     void save(LogCurrentData ncd) throws TransactionJobException {
         isInTransaction();
         
@@ -211,6 +211,19 @@ public class DataLoggerService extends PersistingService {
             else
                 ncd = em.merge(ncd);
             System.err.println("saved: " + ncd);
+        } catch (NoResultException ex) {
+        }
+    }
+
+    void save(LogData nd) throws TransactionJobException {
+        isInTransaction();
+        
+        try {
+            if ( nd.getId() == null )
+                em.persist(nd);
+            else
+                nd = em.merge(nd);
+            System.err.println("saved: " + nd);
         } catch (NoResultException ex) {
         }
     }
