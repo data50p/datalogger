@@ -97,11 +97,9 @@ public class BootstrapDB {
         try {
             final DataLoggerService dls = new DataLoggerService();
 
-            Integer n = dls.withTransaction(new TransactionJob<Integer>() {
-                @Override
-                public Integer perform() {
+            Integer n = dls.withTransaction(() -> {
                     try {
-                        int n = 0;
+			int nn = 0;
                         final LogType t = dls.getLogTypeByName("test");
                         final LogDevice d = dls.getLogDeviceByName("unknown");
                         for (int i = 0; i < loop; i++) {
@@ -117,13 +115,12 @@ public class BootstrapDB {
                             dls.save(ncd);
                             LogData ld = new LogData(ncd);
                             dls.save(ld);
+			    return nn;
                         }
-                        return n;
                     } catch (PersistingService.TransactionJobException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     return null;
-                }
             });
             System.out.println("sd " + n);
         } catch (PersistingService.TransactionJobException ex) {
