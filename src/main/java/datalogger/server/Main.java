@@ -74,7 +74,7 @@ public class Main extends Appl {
 
 	    Integer n = dls.withTransaction(new TransactionJob<Integer>() {
 		@Override
-		public Integer perform() {
+		public Integer exec() {
 		    try {
 			Unit u = dls.getUnitByName("mm");
 			LogData ld = dls.getLogData(1, false);
@@ -97,7 +97,7 @@ public class Main extends Appl {
 
 	    Integer n = dls.withTransaction(new TransactionJob<Integer>() {
 		@Override
-		public Integer perform() {
+		public Integer exec() {
 		    try {
 			Unit u = dls.getUnit(3);
 

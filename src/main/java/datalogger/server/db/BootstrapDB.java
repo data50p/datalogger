@@ -5,6 +5,7 @@
  */
 package datalogger.server.db;
 
+import com.femtioprocent.fpd2.util.MilliTimer;
 import datalogger.server.Main;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.entity.LogCurrentData;
@@ -22,41 +23,50 @@ import java.util.logging.Logger;
  */
 public class BootstrapDB {
 
-    String bootstrapUnits[][] = new String[][]{
-        {"", "identity", null, "1.0"},
+    String bootstrapUnits[][] = new String[][] {
+        {"", "<unknown>", null, "1.0"},
+        {"=", "identity", null, "1.0"},
         {"*", "Any", null, "1.0"},
         {"B", "boolean", null, "1.0"},
         {"I", "counter", null, "1.0"},
         {"D", "number", null, "1.0"},
         {"S", "alpha-numeric", null, "1.0"},
+        {"%", "percent", "D", "0.01"},
         {"m", "length", null, "1.0"},
+        {"s", "time", null, "1.0"},
+        {"ms", "time", "s", "0.001"},
         {"mm", "length", "m", "0.001"},
-        {"°", "temp", null, "1.0"},};
+        {"°", "temp", null, "1.0"},
+        {"Pa", "pressure", null, "1.0"},
+        {"bar", "pressure", "Pa", "100000"},
+	{"millibar", "pressure", "Pa", "100"},
+	{"mmHg", "pressure", "Pa", "133.322"},
+    };
 
     String bootstrapTypes[][] = new String[][]{
         {"test", "Test any", "*"},
-        {"ute-temp", "temp outside", "°"},};
+        {"ute-temp", "temp outside", "°"},
+        {"ute-humidity", "humidity outside", "%"},};
 
     String bootstrapDevs[][] = new String[][]{
         {"unknown", "unknown"},
+        {"test", "Test any"},
         {"ute1", "ute sovrummet"},};
 
     public void update() {
         try {
             final DataLoggerService dls = new DataLoggerService();
 
-            Integer n = dls.withTransaction(new TransactionJob<Integer>() {
-                @Override
-                public Integer perform() {
+            Integer n = dls.withTransaction(() -> {
                     try {
-                        int n = 0;
+                        int nn = 0;
                         for (String[] bu : bootstrapUnits) {
                             final Unit u = dls.getUnitByName(bu[0]);
                             if (u == null) {
                                 final Unit bUnit = bu[2] == null ? null : dls.getUnitByName(bu[2]);
                                 Unit nu = new Unit(bu[0], bu[1], bUnit, Double.parseDouble(bu[3]));
                                 dls.saveUnit(nu);
-                                n++;
+                                nn++;
                             }
                         }
                         for (String[] bt : bootstrapTypes) {
@@ -65,7 +75,7 @@ public class BootstrapDB {
                                 final Unit bUnit = bt[2] == null ? null : dls.getUnitByName(bt[2]);
                                 LogType nt = new LogType(bt[0], bt[1], bUnit);
                                 dls.saveLogType(nt);
-                                n++;
+                                nn++;
                             }
                         }
                         for (String[] bt : bootstrapDevs) {
@@ -73,19 +83,18 @@ public class BootstrapDB {
                             if (t == null) {
                                 LogDevice nt = new LogDevice(bt[0], bt[1]);
                                 dls.saveLogDevice(nt);
-                                n++;
+                                nn++;
                             }
                         }
                         List<Unit> allUnits = dls.getAllUnits();
                         for (Unit u : allUnits) {
                             System.err.println("Found: " + u);
                         }
-                        return n;
+                        return nn;
                     } catch (PersistingService.TransactionJobException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     return null;
-                }
             });
             System.out.println("sd " + n);
         } catch (PersistingService.TransactionJobException ex) {
@@ -97,11 +106,13 @@ public class BootstrapDB {
         try {
             final DataLoggerService dls = new DataLoggerService();
 
+	    MilliTimer mt = new MilliTimer();
+	    
             Integer n = dls.withTransaction(() -> {
                     try {
 			int nn = 0;
                         final LogType t = dls.getLogTypeByName("test");
-                        final LogDevice d = dls.getLogDeviceByName("unknown");
+                        final LogDevice d = dls.getLogDeviceByName("test");
                         for (int i = 0; i < loop; i++) {
                             LogCurrentData cd = dls.getLogCurrentData(t, d);
                             LogCurrentData ncd;
@@ -123,7 +134,8 @@ public class BootstrapDB {
                     }
                     return null;
             });
-            System.out.println("sd " + n);
+	    final double ms = mt.pollValue() / n;
+            System.out.println(mt.getString("sd " + n + ": ", " ms") + ' ' + ms);
         } catch (PersistingService.TransactionJobException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

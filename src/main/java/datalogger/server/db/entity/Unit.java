@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Table(name = "unit",
     indexes = {
         @Index(columnList = "id", name = "unit_id_idx"),
-        @Index(columnList = "name", name = "unit_name_idx")}
+        @Index(columnList = "name", name = "unit_name_idx", unique = true)}
     )
     public class Unit implements Serializable {
 

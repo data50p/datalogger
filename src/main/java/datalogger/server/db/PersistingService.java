@@ -43,9 +43,9 @@ public class PersistingService {
 	return em;
     }
     
+    @FunctionalInterface
     static public interface TransactionJob<T> {
-
-        public T perform() throws TransactionJobException;
+        public T exec() throws TransactionJobException;
     }
 
     static public class TransactionJobException extends Exception {
@@ -63,7 +63,7 @@ public class PersistingService {
             if (isActive) {
                 
                 try {
-                    return j.perform();
+                    return j.exec();
                 } catch (Exception ex) {
                     throw new TransactionJobException("failed job: " + ex);
                 } catch (Error ex) {
@@ -75,7 +75,7 @@ public class PersistingService {
                 em.getTransaction().begin();
                 try {
                     inTransactionJob = true;
-                    return j.perform();
+                    return j.exec();
                 } catch (Exception ex) {
                     em.getTransaction().rollback();
                     ex.printStackTrace();
