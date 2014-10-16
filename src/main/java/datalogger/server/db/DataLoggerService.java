@@ -5,6 +5,7 @@
  */
 package datalogger.server.db;
 
+import datalogger.server.db.entity.Ent;
 import datalogger.server.db.entity.LogCurrentData;
 import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
@@ -42,16 +43,16 @@ public class DataLoggerService extends PersistingService {
         }
     }
 
-    public Unit saveUnit(final Unit u) throws TransactionJobException {
+    public <T extends Ent> T save(final T u) throws TransactionJobException {
         isInTransaction();
 
         Date now = new Date();
-        if (u.newInstance()) {
+        if (u.isNew()) {
             em.persist(u);
             em.flush();
             return u;
         } else {
-            final Unit msd = em.merge(u);
+            final T msd = em.merge(u);
             em.flush();
             return msd;
         }
@@ -83,24 +84,6 @@ public class DataLoggerService extends PersistingService {
             return ld;
         } catch (NoResultException ex) {
             return null;
-        }
-    }
-
-    public LogData saveLogData(LogData ld) throws TransactionJobException {
-        isInTransaction();
-
-        Date now = new Date();
-	if ( ld.getTstamp() == null )
-	    ld.setTstamp(now);
-	
-        if (ld.getId() == null) {
-            em.persist(ld);
-            em.flush();
-            return ld;
-        } else {
-            final LogData mld = em.merge(ld);
-            em.flush();
-            return mld;
         }
     }
 
@@ -159,34 +142,6 @@ public class DataLoggerService extends PersistingService {
         }	
     }
 
-    public LogType saveLogType(LogType nt) throws TransactionJobException {
-        isInTransaction();
-
-        if (nt.getId() == null) {
-            em.persist(nt);
-            em.flush();
-            return nt;
-        } else {
-            final LogType mnt = em.merge(nt);
-            em.flush();
-            return mnt;
-        }
-    }
-
-    public LogDevice saveLogDevice(LogDevice nd) throws TransactionJobException {
-        isInTransaction();
-
-        if (nd.getId() == null) {
-            em.persist(nd);
-            em.flush();
-            return nd;
-        } else {
-            final LogDevice mnd = em.merge(nd);
-            em.flush();
-            return mnd;
-        }
-    }
-
     public LogCurrentData getLogCurrentData(LogType t, LogDevice d) throws TransactionJobException {
         isInTransaction();
         
@@ -211,19 +166,6 @@ public class DataLoggerService extends PersistingService {
             else
                 ncd = em.merge(ncd);
             System.err.println("saved: " + ncd);
-        } catch (NoResultException ex) {
-        }
-    }
-
-    void save(LogData nd) throws TransactionJobException {
-        isInTransaction();
-        
-        try {
-            if ( nd.getId() == null )
-                em.persist(nd);
-            else
-                nd = em.merge(nd);
-            System.err.println("saved: " + nd);
         } catch (NoResultException ex) {
         }
     }

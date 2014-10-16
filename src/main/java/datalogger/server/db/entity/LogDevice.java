@@ -27,7 +27,7 @@ import javax.persistence.Table;
             @Index(columnList = "id", name = "logdev_id_idx"),
             @Index(columnList = "name", name = "logdev_name_idx")}
     )
-    public class LogDevice implements Serializable {
+    public class LogDevice extends Ent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,6 +46,11 @@ import javax.persistence.Table;
     public LogDevice(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    @Override
+    public boolean isNew() {
+	return id == null || id == 0;
     }
 
     public Integer getId() {
@@ -96,5 +101,4 @@ import javax.persistence.Table;
     public String toString() {
         return ToString.toString(this, "-serialVersionUID");
     }
-
 }

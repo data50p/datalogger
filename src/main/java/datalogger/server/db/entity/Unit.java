@@ -27,7 +27,7 @@ import javax.persistence.Table;
         @Index(columnList = "id", name = "unit_id_idx"),
         @Index(columnList = "name", name = "unit_name_idx", unique = true)}
     )
-    public class Unit implements Serializable {
+    public class Unit extends Ent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,6 +56,11 @@ import javax.persistence.Table;
 	this.description = description;
 	this.baseUnit = baseUnit;
 	this.baseFactor = baseFactor;
+    }
+    
+    @Override
+    public boolean isNew() {
+	return id == null || id == 0;
     }
     
     public Integer getId() {

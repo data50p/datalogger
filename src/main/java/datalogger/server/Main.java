@@ -106,7 +106,7 @@ public class Main extends Appl {
 
 			if (ldev != null && ltyp != null) {
 			    LogData ld = new LogData(ldev, ltyp, val);
-			    ld = dls.saveLogData(ld);
+			    ld = dls.save(ld);
 			    System.err.println("saved: " + ld);
 			    return ld.getId();
 			}

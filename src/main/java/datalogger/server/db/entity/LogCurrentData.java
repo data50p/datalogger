@@ -24,10 +24,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(indexes = {
-        @Index(columnList = "id", name = "logcurrentdata_id_idx"),
-        @Index(columnList = "logtype_id,logdev_id", name = "logcurrentdata_ltld_idx")}
-    )
-    public class LogCurrentData implements Serializable {
+    @Index(columnList = "id", name = "logcurrentdata_id_idx"),
+    @Index(columnList = "logtype_id,logdev_id", name = "logcurrentdata_ltld_idx")}
+)
+public class LogCurrentData extends Ent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -72,44 +72,48 @@ import javax.persistence.Table;
     public LogCurrentData(LogDevice logDev, LogType logType) {
 	this.logDev = logDev;
 	this.logType = logType;
-        this.updateCounter = 1;
-        this.tstamp = new Date();
+	this.updateCounter = 1;
+	this.tstamp = new Date();
     }
 
     public LogCurrentData(LogDevice logDev, LogType logType, double value) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.value = value;
-        this.updateCounter = 1;
-        this.tstamp = new Date();
+	this.updateCounter = 1;
+	this.tstamp = new Date();
     }
 
     public LogCurrentData(LogDevice logDev, LogType logType, String svalue) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.svalue = svalue;
-        this.updateCounter = 1;
-        this.tstamp = new Date();
+	this.updateCounter = 1;
+	this.tstamp = new Date();
     }
 
     public LogCurrentData(LogCurrentData prevCurrentData, LogDevice logDev, LogType logType, double value, String svalue) {
-        this(prevCurrentData, logDev, logType, value, svalue, new Date());
+	this(prevCurrentData, logDev, logType, value, svalue, new Date());
     }
-    
+
     public LogCurrentData(LogCurrentData prevCurrentData, LogDevice logDev, LogType logType, double value, String svalue, Date tstamp) {
-        this.id = prevCurrentData.id;
+	this.id = prevCurrentData.id;
 	this.logDev = logDev;
 	this.logType = logType;
 	this.value = value;
 	this.svalue = svalue;
-        this.tstamp = tstamp;
-        this.prevValue = prevCurrentData.value;
-        this.prevSvalue = prevCurrentData.svalue;
-        this.prevTstamp = prevCurrentData.tstamp;
-        this.updateCounter = prevCurrentData.updateCounter + 1;
+	this.tstamp = tstamp;
+	this.prevValue = prevCurrentData.value;
+	this.prevSvalue = prevCurrentData.svalue;
+	this.prevTstamp = prevCurrentData.tstamp;
+	this.updateCounter = prevCurrentData.updateCounter + 1;
     }
 
-    
+    @Override
+    public boolean isNew() {
+	return id == null || id == 0;
+    }
+
     public Integer getId() {
 	return id;
     }
@@ -167,39 +171,39 @@ import javax.persistence.Table;
     }
 
     public double getPrevValue() {
-        return prevValue;
+	return prevValue;
     }
 
     public void setPrevValue(double prevValue) {
-        this.prevValue = prevValue;
+	this.prevValue = prevValue;
     }
 
     public String getPrevSvalue() {
-        return prevSvalue;
+	return prevSvalue;
     }
 
     public void setPrevSvalue(String prevSvalue) {
-        this.prevSvalue = prevSvalue;
+	this.prevSvalue = prevSvalue;
     }
 
     public Date getPrevTstamp() {
-        return prevTstamp;
+	return prevTstamp;
     }
 
     public void setPrevTstamp(Date prevTstamp) {
-        this.prevTstamp = prevTstamp;
+	this.prevTstamp = prevTstamp;
     }
 
     public void setPrevValue(Double prevValue) {
-        this.prevValue = prevValue;
+	this.prevValue = prevValue;
     }
 
     public String getNote() {
-        return note;
+	return note;
     }
 
     public void setNote(String note) {
-        this.note = note;
+	this.note = note;
     }
 
     @Override

@@ -22,35 +22,40 @@ import javax.persistence.Table;
  * @author lars
  */
 @Entity
-@Table(name="logtype",
-    indexes = {
-        @Index(columnList = "id", name = "logtype_id_idx"),
-        @Index(columnList = "name", name = "logtype_name_idx")}
-    )
-    public class LogType implements Serializable {
+@Table(name = "logtype",
+	indexes = {
+	    @Index(columnList = "id", name = "logtype_id_idx"),
+	    @Index(columnList = "name", name = "logtype_name_idx")}
+)
+public class LogType extends Ent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
-    @Column(name="name", length = 40)
+
+    @Column(name = "name", length = 40)
     private String name;
 
-    @Column(name="description", length = 100)
+    @Column(name = "description", length = 100)
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="unit_id", nullable=true)
+    @JoinColumn(name = "unit_id", nullable = true)
     private Unit unit;
 
     public LogType() {
     }
-    
+
     public LogType(String name, String description, Unit unit) {
 	this.name = name;
 	this.description = description;
 	this.unit = unit;
+    }
+
+    @Override
+    public boolean isNew() {
+	return id == null || id == 0;
     }
 
     public String getName() {

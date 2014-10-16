@@ -24,12 +24,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(indexes = {
-        @Index(columnList = "id", name = "logdata_id_idx"),
-        @Index(columnList = "value", name = "logdata_value_idx"),
-        @Index(columnList = "tstamp", name = "logdata_tstamp_idx"),
-        @Index(columnList = "logtype_id,logdev_id", name = "logdata_ltld_idx")}
-    )
-    public class LogData implements Serializable {
+    @Index(columnList = "id", name = "logdata_id_idx"),
+    @Index(columnList = "value", name = "logdata_value_idx"),
+    @Index(columnList = "tstamp", name = "logdata_tstamp_idx"),
+    @Index(columnList = "logtype_id,logdev_id", name = "logdata_ltld_idx")}
+)
+public class LogData extends Ent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -54,23 +54,27 @@ import javax.persistence.Table;
     private LogDevice logDev;
 
     public LogData() {
+	this.tstamp = new Date();
     }
 
     public LogData(LogDevice logDev, LogType logType) {
 	this.logDev = logDev;
 	this.logType = logType;
+	this.tstamp = new Date();
     }
 
     public LogData(LogDevice logDev, LogType logType, double value) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.value = value;
+	this.tstamp = new Date();
     }
 
     public LogData(LogDevice logDev, LogType logType, String svalue) {
 	this.logDev = logDev;
 	this.logType = logType;
 	this.svalue = svalue;
+	this.tstamp = new Date();
     }
 
     public LogData(LogCurrentData lcd) {
@@ -78,10 +82,14 @@ import javax.persistence.Table;
 	this.logType = lcd.getLogType();
 	this.svalue = lcd.getSvalue();
 	this.value = lcd.getValue();
-        this.tstamp = lcd.getTstamp();
+	this.tstamp = lcd.getTstamp();
     }
 
-    
+    @Override
+    public boolean isNew() {
+	return id == null || id == 0;
+    }
+
     public Integer getId() {
 	return id;
     }
