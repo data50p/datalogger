@@ -115,8 +115,9 @@ public class BootstrapDB {
                             dls.save(ncd);
                             LogData ld = new LogData(ncd);
                             dls.save(ld);
-			    return nn;
+			    nn++;
                         }
+			return nn;
                     } catch (PersistingService.TransactionJobException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
