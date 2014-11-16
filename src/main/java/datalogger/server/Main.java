@@ -348,7 +348,7 @@ public class Main extends Appl {
                         if (line.contains("id=135")) {
                             int ix = line.indexOf("temperature=");
                             if (ix > 0) {
-                                String s1 = line.substring(ix + 11);
+                                String s1 = line.substring(ix + 12);
                                 int ix2 = s1.indexOf("\t");
                                 String s2 = s1.substring(0, ix2);
                                 System.err.println(" >> " + s2);
