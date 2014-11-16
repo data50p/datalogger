@@ -346,7 +346,7 @@ public class Main extends Appl {
                             break;
                         }
                         if (line.contains("id=135")) {
-                            int ix = line.indexOf("temperatur=");
+                            int ix = line.indexOf("temperature=");
                             if (ix > 0) {
                                 String s1 = line.substring(ix + 11);
                                 int ix2 = s1.indexOf("\t");
