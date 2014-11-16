@@ -29,6 +29,11 @@ import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
@@ -326,6 +331,21 @@ public class Main extends Appl {
                 System.err.println("tdSc 2");
                 TimeUnit.SECONDS.sleep(5);
 
+                ProcessBuilder b = new ProcessBuilder("tdtool", "--list-sensors");
+                try {
+                    final Process pr = b.start();
+                    final InputStream inS = pr.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(inS));
+                    for(;;) {
+                        final String line = br.readLine();
+                        System.err.println("got line " + line);
+                        if ( line == null )
+                            break;
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 double value = 99.99;
                 Message rmsg = new Message("log", "add ute1 temp:out " + value);
                 System.err.println("tdSc 3");
