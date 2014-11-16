@@ -1,0 +1,5 @@
+nc localhost 8899
+
+_ @ register; aa@datalogger
+
+_ dl-collector-iMac27.local@DATALOGGER; log add ute1 temp:out 99.99
