@@ -117,23 +117,23 @@ public class Main extends Appl {
                         if (ldev != null && ltyp != null) {
                             LogCurrentData lcd = dls.getLogCurrentData(ltyp, ldev);
                             if (lcd == null || lcd.getValue() != val) {
-                                
+
                                 LogData ld = new LogData(ldev, ltyp, val);
                                 ld = dls.save(ld);
-                                
+
                                 if (lcd == null) {
                                     lcd = new LogCurrentData(ldev, ltyp, val);
                                 } else {
                                     lcd = new LogCurrentData(lcd, ldev, ltyp, val, "");
                                 }
                                 dls.save(lcd);
-                                
+
                                 System.err.println("DB saved: " + ld + ' ' + lcd);
-                                
+
                                 return ld.getId();
                             } else {
                                 System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
-                                
+
                             }
                         }
                         return 0;
@@ -336,22 +336,36 @@ public class Main extends Appl {
                     final Process pr = b.start();
                     final InputStream inS = pr.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(inS));
-                    for(;;) {
+
+                    double value = 99.99;
+
+                    for (;;) {
                         final String line = br.readLine();
                         System.err.println("got line " + line);
-                        if ( line == null )
+                        if (line == null) {
                             break;
+                        }
+                        if (line.contains("id=135")) {
+                            int ix = line.indexOf("temperatur=");
+                            if (ix > 0) {
+                                String s1 = line.substring(ix + 11);
+                                int ix2 = s1.indexOf("\t");
+                                String s2 = s1.substring(0, ix2);
+                                System.err.println(" >> " + s2);
+                                value = Double.parseDouble(s2);
+                            }
+                        }
                     }
+                    if (value != 99.99) {
+                        Message rmsg = new Message("log", "add ute1 temp:out " + value);
+                        System.err.println("tdSc 3");
+                        client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                + "@DATALOGGER"), MessageType.plain, rmsg));
+                    }
+                    System.err.println("tdSc 4");
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
-                double value = 99.99;
-                Message rmsg = new Message("log", "add ute1 temp:out " + value);
-                System.err.println("tdSc 3");
-                client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                        + "@DATALOGGER"), MessageType.plain, rmsg));
-                System.err.println("tdSc 4");
             } catch (PropagandaException | InterruptedException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
