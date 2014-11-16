@@ -42,15 +42,17 @@ public class BootstrapDB {
         {"mm", "length", "m", "0.001"},
         {"°", "temp", null, "1.0"},
         {"Pa", "pressure", null, "1.0"},
-        //{"bar", "pressure", "Pa", "100000"},
+        //{"bar", "pressure", "Pa", "100000"},  why
         {"mbar", "pressure", "Pa", "100"},
         {"mmHg", "pressure", "Pa", "133.322"}, //
     };
 
     String bootstrapTypes[][] = new String[][]{
         {"test", "Test any", "*"},
-        {"ute-temp", "temp outside", "°"},
-        {"ute-humidity", "humidity outside", "%"}, //
+        {"temp:out", "temp outside", "°"},
+        {"humidity:out", "humidity outside", "%"}, //
+        {"temp:in", "temp inside", "°"},
+        {"humidity:in", "humidity inside", "%"}, //
     };
 
     String bootstrapDevs[][] = new String[][]{
