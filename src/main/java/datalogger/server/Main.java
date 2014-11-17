@@ -337,30 +337,35 @@ public class Main extends Appl {
                     final InputStream inS = pr.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(inS));
 
-                    double value = 99.99;
+                    try {
+                        double value = 99.99;
 
-                    for (;;) {
-                        final String line = br.readLine();
-                        System.err.println("got line " + line);
-                        if (line == null) {
-                            break;
-                        }
-                        if (line.contains("id=135")) {
-                            int ix = line.indexOf("temperature=");
-                            if (ix > 0) {
-                                String s1 = line.substring(ix + 12);
-                                int ix2 = s1.indexOf("\t");
-                                String s2 = s1.substring(0, ix2);
-                                System.err.println(" >> " + s2);
-                                value = Double.parseDouble(s2);
+                        for (;;) {
+                            final String line = br.readLine();
+                            System.err.println("got line " + line);
+                            if (line == null) {
+                                break;
+                            }
+                            if (line.contains("id=135")) {
+                                int ix = line.indexOf("temperature=");
+                                if (ix > 0) {
+                                    String s1 = line.substring(ix + 12);
+                                    int ix2 = s1.indexOf("\t");
+                                    String s2 = s1.substring(0, ix2);
+                                    System.err.println(" >> " + s2);
+                                    value = Double.parseDouble(s2);
+                                }
                             }
                         }
-                    }
-                    if (value != 99.99) {
-                        Message rmsg = new Message("log", "add ute1 temp:out " + value);
-                        System.err.println("tdSc 3");
-                        client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                + "@DATALOGGER"), MessageType.plain, rmsg));
+                        br.close();
+                        if (value != 99.99) {
+                            Message rmsg = new Message("log", "add ute1 temp:out " + value);
+                            System.err.println("tdSc 3");
+                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                    + "@DATALOGGER"), MessageType.plain, rmsg));
+                        }
+                    } finally {
+                        pr.destroy();
                     }
                     System.err.println("tdSc 4");
                 } catch (IOException ex) {
