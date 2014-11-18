@@ -33,7 +33,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +48,7 @@ public class Main extends Appl {
     public static void main(String[] args) {
         Appl.flags.put("p.host", "127.0.0.1");
         Appl.flags.put("p.port", "8899");
+//        Appl.flags.put("r.host", "");
         decodeArgs(args);
         main(new Main());
     }
@@ -133,7 +133,7 @@ public class Main extends Appl {
                                 return ld.getId();
                             } else {
                                 System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
-
+				return -1;
                             }
                         }
                         return 0;
@@ -144,17 +144,17 @@ public class Main extends Appl {
                 }
             });
             System.out.println("sd id: " + n);
-            return n == null ? -1 : n;
+            return n == null ? -2 : n;
         } catch (PersistingService.TransactionJobException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return -1;
+        return -3;
     }
 
     class CollectorClient extends PropagandaClient {
 
         CollectorClient() {
-            super("DataloggerServer");
+            super("CollectorClient");
         }
 
         void start() {
@@ -193,6 +193,10 @@ public class Main extends Appl {
                                     Message rmsg;
                                     if (id == 0) {
                                         rmsg = new Message("logged", "NOT added");
+				    } else if (id == -1) {
+                                        rmsg = new Message("logged", "SAME not added");
+				    } else if (id < 0) {
+                                        rmsg = new Message("logged", "NOT added, error: " + id);
                                     } else {
                                         rmsg = new Message("logged", "added id " + id);
                                     }
@@ -211,7 +215,7 @@ public class Main extends Appl {
                     }
                 }
             } catch (PropagandaException ex) {
-                S.pL("MainClient: " + ex);
+                S.pL("CollectorClient: " + ex);
             }
         }
     }
@@ -219,7 +223,7 @@ public class Main extends Appl {
     class TelldusClient extends PropagandaClient {
 
         TelldusClient() {
-            super("DataloggerClient");
+            super("TelldusClient");
         }
 
         void start() {
@@ -259,13 +263,13 @@ public class Main extends Appl {
                     }
                 }
             } catch (PropagandaException ex) {
-                S.pL("MainClient: " + ex);
+                S.pL("TelldusClient: " + ex);
             }
         }
     }
 
     private void doCollecting() {
-        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "DataLoggerServer", null, null);
+        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Collector", null, null);
 //        Connector_Plain conn = new Connector_Plain("MainPlain");
         final CollectorClient client = new CollectorClient();
         System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
@@ -275,12 +279,7 @@ public class Main extends Appl {
             conn.attachClient(client);
             S.pL("conn " + conn);
 
-            Thread th2 = new Thread(new Runnable() {
-
-                public void run() {
-                    client.start();
-                }
-            });
+            Thread th2 = new Thread(() -> client.start());
             th2.start();
         } else {
             System.err.println("No connection to propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
@@ -289,7 +288,7 @@ public class Main extends Appl {
     }
 
     private TelldusClient doTelldus() {
-        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "DataLoggerClient", null, null);
+        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Telldus", null, null);
 //        Connector_Plain conn = new Connector_Plain("MainPlain");
         final TelldusClient client = new TelldusClient();
         System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
@@ -299,12 +298,7 @@ public class Main extends Appl {
             conn.attachClient(client);
             S.pL("conn " + conn);
 
-            Thread th2 = new Thread(new Runnable() {
-
-                public void run() {
-                    client.start();
-                }
-            });
+            Thread th2 = new Thread(() -> client.start());
             th2.start();
             return client;
         } else {
@@ -312,6 +306,10 @@ public class Main extends Appl {
             System.exit(1);
         }
         return null;
+    }
+    
+    private Message logMessage(String a) {
+	return new Message("log", a);
     }
 
     private void doTelldusScanning(TelldusClient client) {
@@ -328,17 +326,24 @@ public class Main extends Appl {
         }
         for (;;) {
             try {
+		int collectId = 135;
+		
                 System.err.println("tdSc 2");
                 TimeUnit.SECONDS.sleep(5);
 
-                ProcessBuilder b = new ProcessBuilder("tdtool", "--list-sensors");
+                ProcessBuilder b;
+		if ( Appl.flags.get("r.host") != null )
+		    b = new ProcessBuilder("ssh", Appl.flags.get("r.host"), "/usr/local/bin/tdtool", "--list-sensors");
+		else
+		    b = new ProcessBuilder("/usr/local/bin/tdtool", "--list-sensors");
                 try {
                     final Process pr = b.start();
                     final InputStream inS = pr.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(inS));
 
                     try {
-                        double value = 99.99;
+                        Double tvalue = null;
+                        Double hvalue = null;
 
                         for (;;) {
                             final String line = br.readLine();
@@ -346,21 +351,35 @@ public class Main extends Appl {
                             if (line == null) {
                                 break;
                             }
-                            if (line.contains("id=135")) {
+                            if (line.contains("id=" + collectId)) {
                                 int ix = line.indexOf("temperature=");
                                 if (ix > 0) {
                                     String s1 = line.substring(ix + 12);
                                     int ix2 = s1.indexOf("\t");
                                     String s2 = s1.substring(0, ix2);
-                                    System.err.println(" >> " + s2);
-                                    value = Double.parseDouble(s2);
+                                    System.err.println(" >t> " + s2);
+                                    tvalue = Double.valueOf(s2);
+                                }
+                                ix = line.indexOf("humidity=");
+                                if (ix > 0) {
+                                    String s1 = line.substring(ix + 9);
+                                    int ix2 = s1.indexOf("\t");
+                                    String s2 = s1.substring(0, ix2);
+                                    System.err.println(" >h> " + s2);
+                                    hvalue = Double.valueOf(s2);
                                 }
                             }
                         }
                         br.close();
-                        if (value != 99.99) {
-                            Message rmsg = new Message("log", "add ute1 temp:out " + value);
-                            System.err.println("tdSc 3");
+                        if (tvalue != null) {
+                            Message rmsg = logMessage("add ute1 temp:out " + tvalue);
+                            System.err.println("tdSc 3t");
+                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                    + "@DATALOGGER"), MessageType.plain, rmsg));
+                        }
+                        if (hvalue != null) {
+                            Message rmsg = logMessage("add ute1 humidity:out " + hvalue);
+                            System.err.println("tdSc 3h");
                             client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
                         }

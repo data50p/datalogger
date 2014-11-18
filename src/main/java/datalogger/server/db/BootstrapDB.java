@@ -40,7 +40,7 @@ public class BootstrapDB {
         {"s", "time", null, "1.0"},
         {"ms", "time", "s", "0.001"},
         {"mm", "length", "m", "0.001"},
-        {"°", "temp", null, "1.0"},
+        {"°C", "temp", null, "1.0"},
         {"Pa", "pressure", null, "1.0"},
         //{"bar", "pressure", "Pa", "100000"},  why
         {"mbar", "pressure", "Pa", "100"},
@@ -49,7 +49,7 @@ public class BootstrapDB {
 
     String bootstrapTypes[][] = new String[][]{
         {"test", "Test any", "*"},
-        {"temp:out", "temp outside", "°"},
+        {"temp:out", "temp outside", "°C"},
         {"humidity:out", "humidity outside", "%"}, //
         {"temp:in", "temp inside", "°"},
         {"humidity:in", "humidity inside", "%"}, //
