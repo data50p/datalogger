@@ -1,1 +1,3 @@
 java -jar target/dataloggerserver-1.*-SNAPSHOT-jexec.jar "$@"
+
+### ./run -p.host=xider.local -r.host=xider.local
