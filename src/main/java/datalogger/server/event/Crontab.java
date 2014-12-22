@@ -10,15 +10,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.CronTrigger;
+import static org.quartz.DateBuilder.evenMinuteDate;
 import org.quartz.Job;
 import static org.quartz.JobBuilder.newJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.newTrigger;
 import org.quartz.TriggerKey;
@@ -32,12 +35,18 @@ public class Crontab extends Timer {
 
     Scheduler sched;
 
-    static class CrontabJob implements Job {
+    public static class CrontabJob implements Job {
+
+        public CrontabJob() {
+            System.err.println("created " + this);
+        }
+
+        
         @Override
         public void execute(JobExecutionContext jec) throws JobExecutionException {
             System.err.println("running...");
-//            Runnable r = (Runnable) jec.getJobDetail().getJobDataMap().get("Runnable");
- //           r.run();
+            Runnable r = (Runnable) jec.getJobDetail().getJobDataMap().get("Runnable");
+            r.run();
         }
     }
 
@@ -64,26 +73,28 @@ public class Crontab extends Timer {
         jdm.put("Runnable", r);
 
         JobDetail job = newJob(CrontabJob.class)
-                .withIdentity(id, id)
+                .withIdentity(id, "CrontabJob")
                 .usingJobData(jdm)
                 .build();
 
         CronTrigger trigger = newTrigger()
-                .withIdentity("trigger-crontab." + id, "CrontabTriggerGroup")
+                .withIdentity("trigger-crontab." + id, "CrontabTrigger")
                 .withSchedule(cronSchedule(crontab))
                 .build();
 
         sched.scheduleJob(job, trigger);
-        sched.start();
+        if (!sched.isStarted()) {
+            sched.start();
+        }
 
         getNextFireTime(id);
     }
-    
+
     Date getNextFireTime(String id) {
         try {
-            final Trigger trigger = sched.getTrigger(TriggerKey.triggerKey("trigger-crontab." + id, "CrontabTriggerGroup"));
-            final Date nextFireTime = trigger.getNextFireTime();
-            System.err.println("nft " + nextFireTime + ' ' + new Date());
+            final Trigger trigger = sched.getTrigger(TriggerKey.triggerKey("trigger-crontab." + id, "CrontabTrigger"));
+            final Date nextFireTime = trigger != null ? trigger.getNextFireTime() : new Date(0);
+            System.err.println("nft " + nextFireTime + ' ' + new Date() + ' ' + sched.isInStandbyMode() + ' ' + sched.isShutdown() + ' ' + sched.isStarted());
             return nextFireTime;
         } catch (SchedulerException ex) {
             Logger.getLogger(Crontab.class.getName()).log(Level.SEVERE, null, ex);

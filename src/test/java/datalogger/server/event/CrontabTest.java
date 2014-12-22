@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -51,15 +52,16 @@ public class CrontabTest {
      * Test of register method, of class Crontab.
      */
     @Test
+    @Ignore
     public void testRegister() throws Exception {
         System.out.println("register");
         String id = "junit1";
-        String crontab = "0/5 * * * * ?";
+        String crontab = "* * * * * ?";
         AtomicInteger cnt = new AtomicInteger();
         Crontab instance = new Crontab();
         instance.register(id, crontab, () -> {System.err.println("R " + cnt.incrementAndGet());});
         System.out.println("zzz...");
-        for(int i = 0; i < 15; i++) {
+        for(int i = 0; i < 5; i++) {
             TimeUnit.SECONDS.sleep(1);
             instance.getNextFireTime(id);
         }
