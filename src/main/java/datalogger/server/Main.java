@@ -29,6 +29,7 @@ import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
+import datalogger.server.event.Crontab;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,8 +37,10 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quartz.SchedulerException;
 
 /**
  *
@@ -73,6 +76,7 @@ public class Main extends Appl {
         } else {
             test();
             doCollecting();
+            doCrontab();
             TelldusClient client = doTelldus();
             doTelldusScanning(client);
         }
@@ -133,7 +137,7 @@ public class Main extends Appl {
                                 return ld.getId();
                             } else {
                                 System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
-				return -1;
+                                return -1;
                             }
                         }
                         return 0;
@@ -149,6 +153,25 @@ public class Main extends Appl {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         return -3;
+    }
+
+    private void doCrontab() {
+        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Crontab", null, null);
+//        Connector_Plain conn = new Connector_Plain("MainPlain");
+        final CrontabClient client = new CrontabClient();
+        System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
+        if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
+
+            client.setConnector(conn);
+            conn.attachClient(client);
+            S.pL("conn " + conn);
+
+            Thread th2 = new Thread(() -> client.start());
+            th2.start();
+        } else {
+            System.err.println("No connection to propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
+            System.exit(1);
+        }
     }
 
     class CollectorClient extends PropagandaClient {
@@ -193,9 +216,9 @@ public class Main extends Appl {
                                     Message rmsg;
                                     if (id == 0) {
                                         rmsg = new Message("logged", "NOT added");
-				    } else if (id == -1) {
+                                    } else if (id == -1) {
                                         rmsg = new Message("logged", "SAME not added");
-				    } else if (id < 0) {
+                                    } else if (id < 0) {
                                         rmsg = new Message("logged", "NOT added, error: " + id);
                                     } else {
                                         rmsg = new Message("logged", "added id " + id);
@@ -268,6 +291,91 @@ public class Main extends Appl {
         }
     }
 
+    class CrontabClient extends PropagandaClient {
+
+        CrontabClient() {
+            super("CrontabClient");
+        }
+
+        void start() {
+            try {
+                String hostname = "unknown";
+                try {
+                    hostname = InetAddress.getLocalHost().getHostName();
+                } catch (UnknownHostException ex) {
+                }
+                sendMsg(new Datagram(anonymousAddrType,
+                        serverAddrType,
+                        register,
+                        new Message("dl-crontab-" + hostname
+                                + "@DATALOGGER")));
+
+                try {
+                    AtomicInteger cnt = new AtomicInteger();
+                    Crontab instance = new Crontab();
+                    instance.register("datalogger", "0/10 * * * * ?", () -> {
+                        try {
+                            sendMsg(new Datagram(getDefaultAddrType(), AddrType.createAddrType("*@DATA*"), MessageType.plain, new Message("Crontab trigger")));
+                        } catch (PropagandaException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    });
+                } catch (SchedulerException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                for (;;) {
+                    Datagram datagram = getConnector().recvMsg();
+                    S.pL("Crontab got: " + datagram);
+                    if (datagram == null) {
+                        break;
+                    }
+                    if (datagram.getMessageType() == MessageType.ping) {
+                        sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.pong, datagram.getMessage()));
+                        System.err.println("got datagram: " + name + " =----> PING " + datagram);
+                    } else if (datagram.getMessageType() == MessageType.pong) {
+                        System.err.println("got datagram: " + name + " =----> PONG " + datagram);
+                    } else if (datagram.getMessageType() == MessageType.plain) {
+                        System.err.println("got datagram: " + name + " =----> " + datagram);
+                        String msg = datagram.getMessage().getMessage();
+                        String msgArr[] = datagram.getMessage().getAddendum().split(" ");
+                        if ("xxxxxxxxx".equals(msg)) {
+                            // log add <dev> <type> <value>
+                            if (msgArr.length == 4 && msgArr[0].equals("add")) {
+                                try {
+                                    Double val = Double.parseDouble(msgArr[3].replace(",", "."));
+                                    int id = log(msgArr[1], msgArr[2], val);
+                                    Message rmsg;
+                                    if (id == 0) {
+                                        rmsg = new Message("logged", "NOT added");
+                                    } else if (id == -1) {
+                                        rmsg = new Message("logged", "SAME not added");
+                                    } else if (id < 0) {
+                                        rmsg = new Message("logged", "NOT added, error: " + id);
+                                    } else {
+                                        rmsg = new Message("logged", "added id " + id);
+                                    }
+                                    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+                                } catch (Exception ex) {
+                                    Message rmsg = new Message("logged", "NOT added " + ex);
+                                    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+                                }
+                            } else {
+                                Message rmsg = new Message("error", "format");
+                                sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+                            }
+                        }
+                    } else {
+                        System.err.println("got datagram: _ " + name + " =----> " + datagram);
+                    }
+                }
+            } catch (PropagandaException ex) {
+                S.pL("CrontabClient: " + ex);
+            }
+        }
+    }
+
     private void doCollecting() {
         final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Collector", null, null);
 //        Connector_Plain conn = new Connector_Plain("MainPlain");
@@ -307,9 +415,9 @@ public class Main extends Appl {
         }
         return null;
     }
-    
+
     private Message logMessage(String a) {
-	return new Message("log", a);
+        return new Message("log", a);
     }
 
     private void doTelldusScanning(TelldusClient client) {
@@ -326,16 +434,17 @@ public class Main extends Appl {
         }
         for (;;) {
             try {
-		int collectId = 135;
-		
+                int collectId = 135;
+
                 System.err.println("tdSc 2");
                 TimeUnit.SECONDS.sleep(5);
 
                 ProcessBuilder b;
-		if ( Appl.flags.get("r.host") != null )
-		    b = new ProcessBuilder("ssh", Appl.flags.get("r.host"), "/usr/local/bin/tdtool", "--list-sensors");
-		else
-		    b = new ProcessBuilder("/usr/local/bin/tdtool", "--list-sensors");
+                if (Appl.flags.get("r.host") != null) {
+                    b = new ProcessBuilder("ssh", Appl.flags.get("r.host"), "/usr/local/bin/tdtool", "--list-sensors");
+                } else {
+                    b = new ProcessBuilder("/usr/local/bin/tdtool", "--list-sensors");
+                }
                 try {
                     final Process pr = b.start();
                     final InputStream inS = pr.getInputStream();
