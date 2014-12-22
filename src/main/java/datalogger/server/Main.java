@@ -139,6 +139,8 @@ public class Main extends Appl {
                                 System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
                                 return -1;
                             }
+                        } else {
+                            System.err.println("DB ignore: unknown " + dev + ' ' + type);
                         }
                         return 0;
                     } catch (PersistingService.TransactionJobException ex) {
