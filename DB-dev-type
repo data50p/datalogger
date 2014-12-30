@@ -1,0 +1,16 @@
+DEV
+1;"unknown";"unknown"
+2;"Test any";"test"
+3;"ute sovrummet";"ute1"
+4;"inne sovrummet";"inne1"
+
+
+TYPE
+1;"Test any";"test";
+2;"temp outside";"ute-temp";
+3;"humidity outside";"ute-humidity";
+4;"temp outside";"temp:out";13
+5;"humidity outside";"humidity:out";8
+6;"temp inside";"temp:in";13
+7;"humidity inside";"humidity:in";8
+
