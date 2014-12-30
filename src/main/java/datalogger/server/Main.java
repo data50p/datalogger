@@ -5,7 +5,6 @@
  */
 package datalogger.server;
 
-import ccf.util.Ansi;
 import com.femtioprocent.fpd.appl.Appl;
 import static com.femtioprocent.fpd.appl.Appl.decodeArgs;
 import com.femtioprocent.fpd.sundry.S;
@@ -31,6 +30,7 @@ import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
 import datalogger.server.event.Crontab;
+import fpd.sundry.Ansi;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

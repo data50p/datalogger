@@ -143,9 +143,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>ccf</groupId>
-            <artifactId>ccf-core</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <groupId>ccflib</groupId>
+            <artifactId>ccf-lib-fpd</artifactId>
+            <version>2005.11.06</version>
             <type>jar</type>
         </dependency>
     </dependencies>
