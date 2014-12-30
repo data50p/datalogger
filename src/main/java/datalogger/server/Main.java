@@ -473,9 +473,6 @@ public class Main extends Appl {
 
                     try {
 
-                        Double tvalue = null;
-                        Double hvalue = null;
-
                         for (;;) {
                             final String line = br.readLine();
                             System.err.println(Ansi.red("got line " + line));
@@ -485,6 +482,9 @@ public class Main extends Appl {
 
                             for (Mapper map : mapperList) {
                                 int collectId = map.id;
+
+                                Double tvalue = null;
+                                Double hvalue = null;
 
                                 if (line.contains("id=" + collectId)) {
                                     int ix = line.indexOf("temperature=");
@@ -507,14 +507,14 @@ public class Main extends Appl {
                                 if (tvalue != null) {
                                     String w = map.dest_spec.replace("$W", "temp");
                                     Message rmsg = logMessage("add " + w + " " + tvalue);
-                                    System.err.println("tdSc 3t" + rmsg);
+                                    System.err.println(Ansi.green("send T " + rmsg));
                                     client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                             + "@DATALOGGER"), MessageType.plain, rmsg));
                                 }
                                 if (hvalue != null) {
                                     String w = map.dest_spec.replace("$W", "humidity");
                                     Message rmsg = logMessage("add " + w + " " + hvalue);
-                                    System.err.println("tdSc 3h" + rmsg);
+                                    System.err.println(Ansi.green("send H " + rmsg));
                                     client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                             + "@DATALOGGER"), MessageType.plain, rmsg));
                                 }
