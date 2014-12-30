@@ -516,13 +516,13 @@ public class Main extends Appl {
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
                         }
                         if (tvalue2 != null) {
-                            Message rmsg = logMessage("add inne1 temp:out " + tvalue2);
+                            Message rmsg = logMessage("add inne1 temp:in " + tvalue2);
                             System.err.println("tdSc2 3t");
                             client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
                         }
                         if (hvalue2 != null) {
-                            Message rmsg = logMessage("add inne1 humidity:out " + hvalue2);
+                            Message rmsg = logMessage("add inne1 humidity:in " + hvalue2);
                             System.err.println("tdSc2 3h");
                             client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
