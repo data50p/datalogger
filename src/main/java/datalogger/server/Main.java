@@ -5,6 +5,7 @@
  */
 package datalogger.server;
 
+import ccf.util.Ansi;
 import com.femtioprocent.fpd.appl.Appl;
 import static com.femtioprocent.fpd.appl.Appl.decodeArgs;
 import com.femtioprocent.fpd.sundry.S;
@@ -36,6 +37,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -422,6 +425,18 @@ public class Main extends Appl {
         return new Message("log", a);
     }
 
+    static class Mapper {
+
+        int id;
+        String dest_spec;
+
+        public Mapper(int id, String dest_spec) {
+            this.id = id;
+            this.dest_spec = dest_spec;
+        }
+
+    }
+
     private void doTelldusScanning(TelldusClient client) {
         System.err.println("tdSc 1");
         try {
@@ -434,12 +449,15 @@ public class Main extends Appl {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
         }
+
+        List<Mapper> mapperList = new ArrayList<Mapper>();
+
+        mapperList.add(new Mapper(135, "ute1 $W:out"));
+        mapperList.add(new Mapper(151, "inne1 $W:in"));
+
         for (;;) {
             try {
-                int collectId = 135;
-                int collectId2 = 151;
 
-                System.err.println("tdSc 2");
                 TimeUnit.SECONDS.sleep(5);
 
                 ProcessBuilder b;
@@ -454,79 +472,55 @@ public class Main extends Appl {
                     BufferedReader br = new BufferedReader(new InputStreamReader(inS));
 
                     try {
+
                         Double tvalue = null;
                         Double hvalue = null;
-                        Double tvalue2 = null;
-                        Double hvalue2 = null;
 
                         for (;;) {
                             final String line = br.readLine();
-                            System.err.println("got line " + line);
+                            System.err.println(Ansi.red("got line " + line));
                             if (line == null) {
                                 break;
                             }
-                            if (line.contains("id=" + collectId)) {
-                                int ix = line.indexOf("temperature=");
-                                if (ix > 0) {
-                                    String s1 = line.substring(ix + 12);
-                                    int ix2 = s1.indexOf("\t");
-                                    String s2 = s1.substring(0, ix2);
-                                    System.err.println(" >t> " + s2);
-                                    tvalue = Double.valueOf(s2);
+
+                            for (Mapper map : mapperList) {
+                                int collectId = map.id;
+
+                                if (line.contains("id=" + collectId)) {
+                                    int ix = line.indexOf("temperature=");
+                                    if (ix > 0) {
+                                        String s1 = line.substring(ix + 12);
+                                        int ix2 = s1.indexOf("\t");
+                                        String s2 = s1.substring(0, ix2);
+                                        System.err.println(" >t> " + s2);
+                                        tvalue = Double.valueOf(s2);
+                                    }
+                                    ix = line.indexOf("humidity=");
+                                    if (ix > 0) {
+                                        String s1 = line.substring(ix + 9);
+                                        int ix2 = s1.indexOf("\t");
+                                        String s2 = s1.substring(0, ix2);
+                                        System.err.println(" >h> " + s2);
+                                        hvalue = Double.valueOf(s2);
+                                    }
                                 }
-                                ix = line.indexOf("humidity=");
-                                if (ix > 0) {
-                                    String s1 = line.substring(ix + 9);
-                                    int ix2 = s1.indexOf("\t");
-                                    String s2 = s1.substring(0, ix2);
-                                    System.err.println(" >h> " + s2);
-                                    hvalue = Double.valueOf(s2);
+                                if (tvalue != null) {
+                                    String w = map.dest_spec.replace("$W", "temp");
+                                    Message rmsg = logMessage("add " + w + " " + tvalue);
+                                    System.err.println("tdSc 3t" + rmsg);
+                                    client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                            + "@DATALOGGER"), MessageType.plain, rmsg));
                                 }
-                            }
-                            if (line.contains("id=" + collectId2)) {
-                                int ix = line.indexOf("temperature=");
-                                if (ix > 0) {
-                                    String s1 = line.substring(ix + 12);
-                                    int ix2 = s1.indexOf("\t");
-                                    String s2 = s1.substring(0, ix2);
-                                    System.err.println(" >t2> " + s2);
-                                    tvalue2 = Double.valueOf(s2);
-                                }
-                                ix = line.indexOf("humidity=");
-                                if (ix > 0) {
-                                    String s1 = line.substring(ix + 9);
-                                    int ix2 = s1.indexOf("\t");
-                                    String s2 = s1.substring(0, ix2);
-                                    System.err.println(" >h2> " + s2);
-                                    hvalue2 = Double.valueOf(s2);
+                                if (hvalue != null) {
+                                    String w = map.dest_spec.replace("$W", "humidity");
+                                    Message rmsg = logMessage("add " + w + " " + hvalue);
+                                    System.err.println("tdSc 3h" + rmsg);
+                                    client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                            + "@DATALOGGER"), MessageType.plain, rmsg));
                                 }
                             }
                         }
                         br.close();
-                        if (tvalue != null) {
-                            Message rmsg = logMessage("add ute1 temp:out " + tvalue);
-                            System.err.println("tdSc 3t");
-                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                    + "@DATALOGGER"), MessageType.plain, rmsg));
-                        }
-                        if (hvalue != null) {
-                            Message rmsg = logMessage("add ute1 humidity:out " + hvalue);
-                            System.err.println("tdSc 3h");
-                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                    + "@DATALOGGER"), MessageType.plain, rmsg));
-                        }
-                        if (tvalue2 != null) {
-                            Message rmsg = logMessage("add inne1 temp:in " + tvalue2);
-                            System.err.println("tdSc2 3t");
-                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                    + "@DATALOGGER"), MessageType.plain, rmsg));
-                        }
-                        if (hvalue2 != null) {
-                            Message rmsg = logMessage("add inne1 humidity:in " + hvalue2);
-                            System.err.println("tdSc2 3h");
-                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                    + "@DATALOGGER"), MessageType.plain, rmsg));
-                        }
                     } finally {
                         pr.destroy();
                     }
