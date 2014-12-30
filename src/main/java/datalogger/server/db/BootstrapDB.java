@@ -59,6 +59,7 @@ public class BootstrapDB {
         {"unknown", "unknown"},
         {"test", "Test any"},
         {"ute1", "ute sovrummet"}, //
+        {"inne1", "inne sovrummet"}, //
     };
 
     public void update() {

@@ -437,6 +437,7 @@ public class Main extends Appl {
         for (;;) {
             try {
                 int collectId = 135;
+                int collectId2 = 151;
 
                 System.err.println("tdSc 2");
                 TimeUnit.SECONDS.sleep(5);
@@ -455,6 +456,8 @@ public class Main extends Appl {
                     try {
                         Double tvalue = null;
                         Double hvalue = null;
+                        Double tvalue2 = null;
+                        Double hvalue2 = null;
 
                         for (;;) {
                             final String line = br.readLine();
@@ -480,6 +483,24 @@ public class Main extends Appl {
                                     hvalue = Double.valueOf(s2);
                                 }
                             }
+                            if (line.contains("id=" + collectId2)) {
+                                int ix = line.indexOf("temperature=");
+                                if (ix > 0) {
+                                    String s1 = line.substring(ix + 12);
+                                    int ix2 = s1.indexOf("\t");
+                                    String s2 = s1.substring(0, ix2);
+                                    System.err.println(" >t2> " + s2);
+                                    tvalue2 = Double.valueOf(s2);
+                                }
+                                ix = line.indexOf("humidity=");
+                                if (ix > 0) {
+                                    String s1 = line.substring(ix + 9);
+                                    int ix2 = s1.indexOf("\t");
+                                    String s2 = s1.substring(0, ix2);
+                                    System.err.println(" >h2> " + s2);
+                                    hvalue2 = Double.valueOf(s2);
+                                }
+                            }
                         }
                         br.close();
                         if (tvalue != null) {
@@ -491,6 +512,18 @@ public class Main extends Appl {
                         if (hvalue != null) {
                             Message rmsg = logMessage("add ute1 humidity:out " + hvalue);
                             System.err.println("tdSc 3h");
+                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                    + "@DATALOGGER"), MessageType.plain, rmsg));
+                        }
+                        if (tvalue2 != null) {
+                            Message rmsg = logMessage("add inne1 temp:out " + tvalue2);
+                            System.err.println("tdSc2 3t");
+                            client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                    + "@DATALOGGER"), MessageType.plain, rmsg));
+                        }
+                        if (hvalue2 != null) {
+                            Message rmsg = logMessage("add inne1 humidity:out " + hvalue2);
+                            System.err.println("tdSc2 3h");
                             client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
                         }
