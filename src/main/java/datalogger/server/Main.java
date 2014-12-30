@@ -429,10 +429,12 @@ public class Main extends Appl {
 
         int id;
         String dest_spec;
+        String hwid;
 
-        public Mapper(int id, String dest_spec) {
+        public Mapper(int id, String dest_spec, String hwid) {
             this.id = id;
             this.dest_spec = dest_spec;
+            this.hwid = hwid;
         }
 
     }
@@ -452,8 +454,8 @@ public class Main extends Appl {
 
         List<Mapper> mapperList = new ArrayList<Mapper>();
 
-        mapperList.add(new Mapper(135, "ute1 $W:out"));
-        mapperList.add(new Mapper(151, "inne1 $W:in"));
+        mapperList.add(new Mapper(135, "ute1 $W:out", "kjell-TH"));
+        mapperList.add(new Mapper(151, "inne1 $W:in", "kjell-TH"));
 
         for (;;) {
             try {
@@ -483,40 +485,42 @@ public class Main extends Appl {
                             for (Mapper map : mapperList) {
                                 int collectId = map.id;
 
-                                Double tvalue = null;
-                                Double hvalue = null;
+                                if (map.hwid.equals("kjell-TH")) {
+                                    Double tvalue = null;
+                                    Double hvalue = null;
 
-                                if (line.contains("id=" + collectId)) {
-                                    int ix = line.indexOf("temperature=");
-                                    if (ix > 0) {
-                                        String s1 = line.substring(ix + 12);
-                                        int ix2 = s1.indexOf("\t");
-                                        String s2 = s1.substring(0, ix2);
-                                        System.err.println(" >t> " + s2);
-                                        tvalue = Double.valueOf(s2);
+                                    if (line.contains("id=" + collectId)) {
+                                        int ix = line.indexOf("temperature=");
+                                        if (ix > 0) {
+                                            String s1 = line.substring(ix + 12);
+                                            int ix2 = s1.indexOf("\t");
+                                            String s2 = s1.substring(0, ix2);
+                                            System.err.println(" >t> " + s2);
+                                            tvalue = Double.valueOf(s2);
+                                        }
+                                        ix = line.indexOf("humidity=");
+                                        if (ix > 0) {
+                                            String s1 = line.substring(ix + 9);
+                                            int ix2 = s1.indexOf("\t");
+                                            String s2 = s1.substring(0, ix2);
+                                            System.err.println(" >h> " + s2);
+                                            hvalue = Double.valueOf(s2);
+                                        }
                                     }
-                                    ix = line.indexOf("humidity=");
-                                    if (ix > 0) {
-                                        String s1 = line.substring(ix + 9);
-                                        int ix2 = s1.indexOf("\t");
-                                        String s2 = s1.substring(0, ix2);
-                                        System.err.println(" >h> " + s2);
-                                        hvalue = Double.valueOf(s2);
+                                    if (tvalue != null) {
+                                        String w = map.dest_spec.replace("$W", "temp");
+                                        Message rmsg = logMessage("add " + w + " " + tvalue);
+                                        System.err.println(Ansi.green("send T " + rmsg));
+                                        client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                                + "@DATALOGGER"), MessageType.plain, rmsg));
                                     }
-                                }
-                                if (tvalue != null) {
-                                    String w = map.dest_spec.replace("$W", "temp");
-                                    Message rmsg = logMessage("add " + w + " " + tvalue);
-                                    System.err.println(Ansi.green("send T " + rmsg));
-                                    client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                            + "@DATALOGGER"), MessageType.plain, rmsg));
-                                }
-                                if (hvalue != null) {
-                                    String w = map.dest_spec.replace("$W", "humidity");
-                                    Message rmsg = logMessage("add " + w + " " + hvalue);
-                                    System.err.println(Ansi.green("send H " + rmsg));
-                                    client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
-                                            + "@DATALOGGER"), MessageType.plain, rmsg));
+                                    if (hvalue != null) {
+                                        String w = map.dest_spec.replace("$W", "humidity");
+                                        Message rmsg = logMessage("add " + w + " " + hvalue);
+                                        System.err.println(Ansi.green("send H " + rmsg));
+                                        client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
+                                                + "@DATALOGGER"), MessageType.plain, rmsg));
+                                    }
                                 }
                             }
                         }
