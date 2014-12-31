@@ -142,12 +142,6 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>ccflib</groupId>
-            <artifactId>ccf-lib-fpd</artifactId>
-            <version>2005.11.06</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
 
 <distributionManagement>
