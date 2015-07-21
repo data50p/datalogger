@@ -51,7 +51,7 @@ public class BootstrapDB {
         {"test", "Test any", "*"},
         {"temp:out", "temp outside", "°C"},
         {"humidity:out", "humidity outside", "%"}, //
-        {"temp:in", "temp inside", "°"},
+        {"temp:in", "temp inside", "°C"},
         {"humidity:in", "humidity inside", "%"}, //
     };
 

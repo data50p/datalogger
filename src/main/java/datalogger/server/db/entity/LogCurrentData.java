@@ -23,7 +23,8 @@ import javax.persistence.Table;
  * @author lars
  */
 @Entity
-@Table(indexes = {
+@Table(name = "logcurrentdata",
+	indexes = {
     @Index(columnList = "id", name = "logcurrentdata_id_idx"),
     @Index(columnList = "logtype_id,logdev_id", name = "logcurrentdata_ltld_idx")}
 )
