@@ -53,7 +53,7 @@ public class Main extends Appl {
 
     public static void main(String[] args) {
         Appl.flags.put("p.host", "127.0.0.1");
-        Appl.flags.put("p.port", "8899");
+        Appl.flags.put("p.port", "8799");
 //        Appl.flags.put("r.host", "");
         decodeArgs(args);
         main(new Main());
