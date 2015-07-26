@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PersistingService {
 
-    protected static EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("dataloggerserver-1.0-mysql-PU");
+    static String PU_NAME = "dataloggerserver-1.0-mysql-test-PU";
+    
+    protected static EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory(PU_NAME);
     protected EntityManager em;
     private AtomicInteger counter = new AtomicInteger();
     protected boolean fail = false;

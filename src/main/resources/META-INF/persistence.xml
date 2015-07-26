@@ -28,4 +28,18 @@
       <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
+  <persistence-unit name="dataloggerserver-1.0-mysql-test-PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>datalogger.server.db.entity.Ent</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://magenta:3306/datalogger_test"/>
+      <!--jdbc:derby://localhost:1527/sample"/> -->
+      <property name="javax.persistence.jdbc.user" value="datalogger"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <!-- value="org.apache.derby.jdbc.ClientDriver"/> -->
+      <property name="javax.persistence.jdbc.password" value="datalogger4"/>
+      <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+    </properties>
+  </persistence-unit>
 </persistence>
