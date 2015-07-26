@@ -25,5 +25,7 @@ public class TestBean {
         this.data = data;
     }
     
-    
+    public void button1() {
+	this.data = "1000";
+    }
 }
