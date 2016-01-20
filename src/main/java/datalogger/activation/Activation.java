@@ -32,6 +32,9 @@ public abstract class Activation {
 
 	TelldusActivation tda = new TelldusActivation();
 	tda.start();
+
+        EliqActivation eda = new EliqActivation();
+	eda.start();
     }
 
     public abstract void start();

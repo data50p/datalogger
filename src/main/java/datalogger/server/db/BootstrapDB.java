@@ -45,6 +45,7 @@ public class BootstrapDB {
         //{"bar", "pressure", "Pa", "100000"},  why
         {"mbar", "pressure", "Pa", "100"},
         {"mmHg", "pressure", "Pa", "133.322"}, //
+        {"W", "power", null, "1.0"}, //
     };
 
     String bootstrapTypes[][] = new String[][]{
@@ -53,6 +54,7 @@ public class BootstrapDB {
         {"humidity:out", "humidity outside", "%"}, //
         {"temp:in", "temp inside", "°C"},
         {"humidity:in", "humidity inside", "%"}, //
+        {"el", "el-effekt", "W"}, //
     };
 
     String bootstrapDevs[][] = new String[][]{
@@ -60,6 +62,7 @@ public class BootstrapDB {
         {"test", "Test any"},
         {"ute1", "ute sovrummet"}, //
         {"inne1", "inne sovrummet"}, //
+        {"elmät", "Elmätare skåpet"}, //
     };
 
     public void update() {
