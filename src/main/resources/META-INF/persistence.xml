@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="dataloggerserver-1.0-PU" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="dataloggerserver-1.0-prod" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>datalogger.server.db.entity.Ent</class>
     <properties>
@@ -14,7 +14,7 @@
       <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
-  <persistence-unit name="dataloggerserver-1.0-mysql-PU" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="dataloggerserver-1.0-mysql-prod" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>datalogger.server.db.entity.Ent</class>
     <properties>
@@ -28,7 +28,21 @@
       <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
-  <persistence-unit name="dataloggerserver-1.0-mysql-test-PU" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="dataloggerserver-1.0-mysql-test" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>datalogger.server.db.entity.Ent</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://magenta:3306/datalogger_test"/>
+      <!--jdbc:derby://localhost:1527/sample"/> -->
+      <property name="javax.persistence.jdbc.user" value="datalogger"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <!-- value="org.apache.derby.jdbc.ClientDriver"/> -->
+      <property name="javax.persistence.jdbc.password" value="datalogger4"/>
+      <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="dataloggerserver-1.0-mysql-dev" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>datalogger.server.db.entity.Ent</class>
     <properties>

@@ -5,15 +5,16 @@
  */
 package datalogger.server.db;
 
+import datalogger.server.Main;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PersistingService {
 
-    static String PU_NAME = "dataloggerserver-1.0-mysql-test-PU";
+    static String PU_NAME = "dataloggerserver-1.0-mysql-$ENV";
     
-    protected static EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory(PU_NAME);
+    protected static EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory(PU_NAME.replace("$ENV", Main.env));
     protected EntityManager em;
     private AtomicInteger counter = new AtomicInteger();
     protected boolean fail = false;

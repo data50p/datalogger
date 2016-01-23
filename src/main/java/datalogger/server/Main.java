@@ -23,12 +23,17 @@ import java.util.logging.Logger;
  * @author lars
  */
 public class Main extends Appl {
-
+    public static String env = "test";
+    
     public static void main(String[] args) {
         Appl.flags.put("p.host", "127.0.0.1");
         Appl.flags.put("p.port", "8799");
 //        Appl.flags.put("r.host", "");
         decodeArgs(args);
+        
+        if ( flags.get("env") != null )
+            env = flags.get("env");
+        
         main(new Main());
     }
 
