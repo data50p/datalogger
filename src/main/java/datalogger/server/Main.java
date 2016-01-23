@@ -54,6 +54,11 @@ public class Main extends Appl {
             b.test(loop);
             System.err.println("saving total: " + loop + ' ' + mt.getString());
             System.exit(0);
+        } else if (Appl.flags.get("help") != null) {
+            System.err.println("-bootstrap");
+            System.err.println("-test");
+            System.err.println("-env=<test,dev,prod>");
+            System.exit(0);
         } else {
             test();
 	    Activation.runAll();
