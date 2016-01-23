@@ -19,6 +19,7 @@ import static com.femtioprocent.propaganda.data.MessageType.register;
 import com.femtioprocent.propaganda.exception.PropagandaException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 /**
  *
@@ -65,6 +66,28 @@ public class CollectActivation extends Activation {
 				try {
 				    Double val = Double.parseDouble(msgArr[3].replace(",", "."));
 				    int id = log(msgArr[1], msgArr[2], val);
+				    Message rmsg;
+				    if (id == 0) {
+					rmsg = new Message("logged", "NOT added");
+				    } else if (id == -1) {
+					rmsg = new Message("logged", "SAME not added");
+				    } else if (id < 0) {
+					rmsg = new Message("logged", "NOT added, error: " + id);
+				    } else {
+					rmsg = new Message("logged", "added id " + id);
+				    }
+				    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+				} catch (Exception ex) {
+				    Message rmsg = new Message("logged", "NOT added " + ex);
+				    sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.plain, rmsg));
+				}
+                            } else if (msgArr.length == 5 && msgArr[0].equals("addT")) {
+                                // log addT <timestamp> <dev> <type> <value>
+				try {
+                                    Long tm = Long.parseLong(msgArr[1]);
+                                    Date timestamp = new Date(tm);
+				    Double val = Double.parseDouble(msgArr[4].replace(",", "."));
+				    int id = log(msgArr[2], msgArr[3], val, timestamp);
 				    Message rmsg;
 				    if (id == 0) {
 					rmsg = new Message("logged", "NOT added");

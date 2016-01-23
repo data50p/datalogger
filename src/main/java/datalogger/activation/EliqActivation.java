@@ -26,7 +26,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -153,9 +157,9 @@ public class EliqActivation extends Activation {
 
                 ProcessBuilder b;
                 if (Appl.flags.get("r.host") != null) {
-                    b = new ProcessBuilder("wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9");
+                    b = new ProcessBuilder("/usr/local/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9");
                 } else {
-                    b = new ProcessBuilder("wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9");
+                    b = new ProcessBuilder("/usr/local/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9");
                 }
                 try {
                     final Process pr = b.start();
@@ -175,8 +179,8 @@ public class EliqActivation extends Activation {
                             JSONObject jo = new JSONObject(jt);
                             final double pw = jo.getDouble("power");
                             final String cd = jo.getString("createddate");
-                            
-                            Message rmsg = logMessage("add elmät el " + pw);
+                            Date cDate = parseDate(cd);
+                            Message rmsg = logMessage("addT " + cDate.getTime() + " elmät el " + pw);
                             System.err.println(Ansi.green("Eliq send T " + rmsg));
                             client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                     + "@DATALOGGER"), MessageType.plain, rmsg));
@@ -194,6 +198,18 @@ public class EliqActivation extends Activation {
             }
         }
     }
+
+    private Date parseDate(String cd) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date d = null;
+        try {
+            d = df.parse(cd);
+        } catch (ParseException ex) {
+            Logger.getLogger(EliqActivation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return d;
+    }
+
 
     public void start() {
         doEliq();

@@ -14,6 +14,7 @@ import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +41,10 @@ public abstract class Activation {
     public abstract void start();
     
     protected int log(final String dev, final String type, final double val) {
+        return log(dev, type, val, null);
+    }
+    
+    protected int log(final String dev, final String type, final double val, final Date timestamp) {
 	try {
 	    final DataLoggerService dls = new DataLoggerService();
 
@@ -57,12 +62,18 @@ public abstract class Activation {
 			    if (lcd == null || lcd.getValue() != val) {
 
 				LogData ld = new LogData(ldev, ltyp, val);
+                                if ( timestamp != null )
+                                    ld.setTstamp(timestamp);
 				ld = dls.save(ld);
 
 				if (lcd == null) {
 				    lcd = new LogCurrentData(ldev, ltyp, val);
+                                    if ( timestamp != null )
+                                        lcd.setTstamp(timestamp);
 				} else {
 				    lcd = new LogCurrentData(lcd, ldev, ltyp, val, "");
+                                    if ( timestamp != null )
+                                        lcd.setTstamp(timestamp);
 				}
 				dls.save(lcd);
 
