@@ -1,0 +1,1 @@
+./run -p.host=magenta -r.host=xider.local -p.port=8899 -env=prod
