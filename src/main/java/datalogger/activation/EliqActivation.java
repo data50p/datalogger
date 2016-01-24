@@ -97,8 +97,7 @@ public class EliqActivation extends Activation {
         System.err.println("EliqActivation " + " Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
-            client.setConnector(conn);
-            conn.attachClient(client);
+            client.setConnectorAndAttach(conn);
             S.pL("conn " + conn);
 
             (new Thread(() -> client.start())).start();
