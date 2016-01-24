@@ -28,8 +28,8 @@ public abstract class Activation {
 	CollectActivation ca = new CollectActivation();
 	ca.start();
 
-	CrontabActivation cta = new CrontabActivation();
-	cta.start();
+	//CrontabActivation cta = new CrontabActivation();
+	//cta.start();
 
 	TelldusActivation tda = new TelldusActivation();
 	tda.start();
