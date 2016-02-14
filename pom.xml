@@ -126,7 +126,11 @@
         <dependency>
             <groupId>com.femtioprocent</groupId>
             <artifactId>propaganda</artifactId>
+<<<<<<< HEAD
             <version>0.1.6.0-SNAPSHOT</version>
+=======
+            <version>0.1.5.5-SNAPSHOT</version>
+>>>>>>> 35a286a014a89ae023b9d6f699abde0c802c7533
         </dependency>
         <dependency>
             <groupId>com.femtioprocent</groupId>

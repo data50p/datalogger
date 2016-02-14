@@ -72,18 +72,13 @@ public class CrontabActivation extends Activation {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                for (; ; ) {
+                for (;;) {
                     Datagram datagram = getConnector().recvMsg();
                     S.pL("Crontab got: " + datagram);
                     if (datagram == null) {
                         break;
                     }
-                    if (datagram.getMessageType() == MessageType.ping) {
-                        sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.pong, datagram.getMessage()));
-                        System.err.println("got datagram: " + name + " =----> PING " + datagram);
-                    } else if (datagram.getMessageType() == MessageType.pong) {
-                        System.err.println("got datagram: " + name + " =----> PONG " + datagram);
-                    } else if (datagram.getMessageType() == MessageType.plain) {
+                    if (standardProcessMessage(datagram, MessageType.plain) == MessageTypeFilter.FILTERED) {
                         System.err.println("got datagram: " + name + " =----> " + datagram);
                         String msg = datagram.getMessage().getMessage();
                         String msgArr[] = datagram.getMessage().getAddendum().split(" ");
@@ -106,8 +101,7 @@ public class CrontabActivation extends Activation {
         System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
-            client.setConnector(conn);
-            conn.attachClient(client);
+            client.setConnectorAndAttach(conn);
             S.pL("conn " + conn);
 
             Thread th2 = new Thread(() -> client.start());

@@ -23,7 +23,6 @@ import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -74,12 +73,7 @@ public class EliqActivation extends Activation {
                     if (datagram == null) {
                         break;
                     }
-                    if (datagram.getMessageType() == MessageType.ping) {
-                        sendMsg(new Datagram(getDefaultAddrType(), datagram.getSender(), MessageType.pong, datagram.getMessage()));
-                        System.err.println(name + "got datagram: " + name + " =----> PING " + datagram);
-                    } else if (datagram.getMessageType() == MessageType.pong) {
-                        System.err.println("got datagram: " + name + " =----> PONG " + datagram);
-                    } else if (datagram.getMessageType() == MessageType.plain) {
+                    if (standardProcessMessage(datagram, MessageType.plain) == MessageTypeFilter.FILTERED) {
                         System.err.println("got datagram: " + name + " =----> " + datagram);
                         String msg = datagram.getMessage().getMessage();
                         String msgArr[] = datagram.getMessage().getAddendum().split(" ");
@@ -88,8 +82,6 @@ public class EliqActivation extends Activation {
                         } else {
                             System.err.println(name + " got datagram: _ " + name + " =----> " + datagram);
                         }
-                    } else {
-                        System.err.println(name + " got datagram: _ " + name + " =----> " + datagram);
                     }
                 }
             } catch (PropagandaException ex) {
@@ -105,8 +97,7 @@ public class EliqActivation extends Activation {
         System.err.println("EliqActivation " + " Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
-            client.setConnector(conn);
-            conn.attachClient(client);
+            client.setConnectorAndAttach(conn);
             S.pL("conn " + conn);
 
             (new Thread(() -> client.start())).start();
@@ -196,7 +187,6 @@ public class EliqActivation extends Activation {
         }
         return null;
     }
-
 
     public void start() {
         doEliq();
