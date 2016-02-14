@@ -126,12 +126,12 @@
         <dependency>
             <groupId>com.femtioprocent</groupId>
             <artifactId>propaganda</artifactId>
-            <version>0.1.5.1-SNAPSHOT</version>
+            <version>0.1.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.femtioprocent</groupId>
             <artifactId>fpd</artifactId>
-            <version>0.1.0.0-SNAPSHOT</version>
+            <version>0.1.0.0</version>
         </dependency>
         <!-- - ->
                 <!- - older, continued in grappa - ->
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>com.femtioprocent</groupId>
             <artifactId>fpd2</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.0.0.1</version>
             <type>jar</type>
         </dependency>
 
