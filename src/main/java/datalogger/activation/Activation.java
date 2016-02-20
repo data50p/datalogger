@@ -48,51 +48,48 @@ public abstract class Activation {
 	try {
 	    final DataLoggerService dls = new DataLoggerService();
 
-	    Integer n = dls.withTransaction(new PersistingService.TransactionJob<Integer>() {
-		@Override
-		public Integer exec() {
-		    try {
-			Unit u = dls.getUnit(3);
-
-			LogDevice ldev = dls.getLogDeviceByName(dev);
-			LogType ltyp = dls.getLogTypeByName(type);
-
-			if (ldev != null && ltyp != null) {
-			    LogCurrentData lcd = dls.getLogCurrentData(ltyp, ldev);
-			    if (lcd == null || lcd.getValue() != val) {
-
-				LogData ld = new LogData(ldev, ltyp, val);
-                                if ( timestamp != null )
-                                    ld.setTstamp(timestamp);
-				ld = dls.save(ld);
-
-				if (lcd == null) {
-				    lcd = new LogCurrentData(ldev, ltyp, val);
-                                    if ( timestamp != null )
-                                        lcd.setTstamp(timestamp);
-				} else {
-				    lcd = new LogCurrentData(lcd, ldev, ltyp, val, "");
-                                    if ( timestamp != null )
-                                        lcd.setTstamp(timestamp);
-				}
-				dls.save(lcd);
-
-				System.err.println("DB saved: " + ld + ' ' + lcd);
-
-				return ld.getId();
+	    Integer n = dls.withTransaction(() -> {
+		try {
+		    Unit u = dls.getUnit(3);
+		    
+		    LogDevice ldev = dls.getLogDeviceByName(dev);
+		    LogType ltyp = dls.getLogTypeByName(type);
+		    
+		    if (ldev != null && ltyp != null) {
+			LogCurrentData lcd = dls.getLogCurrentData(ltyp, ldev);
+			if (lcd == null || lcd.getValue() != val) {
+			    
+			    LogData ld = new LogData(ldev, ltyp, val);
+			    if ( timestamp != null )
+				ld.setTstamp(timestamp);
+			    ld = dls.save(ld);
+			    
+			    if (lcd == null) {
+				lcd = new LogCurrentData(ldev, ltyp, val);
+				if ( timestamp != null )
+				    lcd.setTstamp(timestamp);
 			    } else {
-				System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
-				return -1;
+				lcd = new LogCurrentData(lcd, ldev, ltyp, val, "");
+				if ( timestamp != null )
+				    lcd.setTstamp(timestamp);
 			    }
+			    dls.save(lcd);
+			    
+			    System.err.println("DB saved: " + ld + ' ' + lcd);
+			    
+			    return ld.getId();
 			} else {
-			    System.err.println("DB ignore: unknown " + dev + ' ' + type);
+			    System.err.println("DB saved: SKIP same " + val + ' ' + lcd);
+			    return -1;
 			}
-			return 0;
-		    } catch (PersistingService.TransactionJobException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		    } else {
+			System.err.println("DB ignore: unknown " + dev + ' ' + type);
 		    }
-		    return null;
+		    return 0;
+		} catch (PersistingService.TransactionJobException ex) {
+		    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		return null;
 	    });
 	    System.out.println("sd id: " + n);
 	    return n == null ? -2 : n;

@@ -69,19 +69,16 @@ public class Main extends Appl {
         try {
             final DataLoggerService dls = new DataLoggerService();
 
-            Integer n = dls.withTransaction(new TransactionJob<Integer>() {
-                @Override
-                public Integer exec() {
-                    try {
-                        Unit u = dls.getUnitByName("mm");
-                        LogData ld = dls.getLogData(1, false);
-                        return u.getId();
-                    } catch (PersistingService.TransactionJobException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    return null;
-                }
-            });
+            Integer n = dls.withTransaction(() -> {
+		try {
+		    Unit u = dls.getUnitByName("mm");
+		    LogData ld = dls.getLogData(1, false);
+		    return u.getId();
+		} catch (PersistingService.TransactionJobException ex) {
+		    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	    });
             System.out.println("sd " + n);
         } catch (PersistingService.TransactionJobException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
