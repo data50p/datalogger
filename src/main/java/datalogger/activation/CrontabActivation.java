@@ -8,7 +8,7 @@ package datalogger.activation;
 import com.femtioprocent.fpd.appl.Appl;
 import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.propaganda.client.PropagandaClient;
-import com.femtioprocent.propaganda.connector.Connector_Plain;
+import com.femtioprocent.propaganda.connector.Connector_Tcp;
 import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;
 import com.femtioprocent.propaganda.data.AddrType;
 
@@ -74,7 +74,7 @@ public class CrontabActivation extends Activation {
 
                 for (;;) {
                     Datagram datagram = getConnector().recvMsg();
-                    S.pL("Crontab got: " + datagram);
+                    System.err.println("Crontab got: " + datagram);
                     if (datagram == null) {
                         break;
                     }
@@ -89,20 +89,19 @@ public class CrontabActivation extends Activation {
                     }
                 }
             } catch (PropagandaException ex) {
-                S.pL("CrontabClient: " + ex);
+                System.err.println("CrontabClient: " + ex);
             }
         }
     }
 
     void doCrontab() {
-        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Crontab", null, null);
-//        Connector_Plain conn = new Connector_Plain("MainPlain");
+        final Connector_Tcp conn = (Connector_Tcp) PropagandaConnectorFactory.create("Tcp", "Crontab", null, null);
         final CrontabClient client = new CrontabClient();
         System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
             client.setConnectorAndAttach(conn);
-            S.pL("conn " + conn);
+            System.err.println("conn " + conn);
 
             Thread th2 = new Thread(() -> client.start());
             th2.start();

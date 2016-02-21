@@ -9,7 +9,7 @@ import com.femtioprocent.fpd.appl.Appl;
 import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.fpd.util.Ansi;
 import com.femtioprocent.propaganda.client.PropagandaClient;
-import com.femtioprocent.propaganda.connector.Connector_Plain;
+import com.femtioprocent.propaganda.connector.Connector_Tcp;
 import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;
 import com.femtioprocent.propaganda.data.AddrType;
 import com.femtioprocent.propaganda.data.Datagram;
@@ -69,7 +69,7 @@ public class EliqActivation extends Activation {
                                 + "@DATALOGGER")));
                 for (;;) {
                     Datagram datagram = getConnector().recvMsg();
-                    S.pL(name + " got: " + datagram);
+                    System.err.println(name + " got: " + datagram);
                     if (datagram == null) {
                         break;
                     }
@@ -91,14 +91,14 @@ public class EliqActivation extends Activation {
     }
 
     protected void doEliq() {
-        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Eliq", null, null);
+        final Connector_Tcp conn = (Connector_Tcp) PropagandaConnectorFactory.create("Tcp", "Eliq", null, null);
 //        Connector_Plain conn = new Connector_Plain("MainPlain");
         final EliqClient client = new EliqClient();
         System.err.println("EliqActivation " + " Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
 
             client.setConnectorAndAttach(conn);
-            S.pL("conn " + conn);
+            System.err.println("conn " + conn);
 
             (new Thread(() -> client.start())).start();
             (new Thread(() -> doEliqScanning(client))).start();

@@ -8,7 +8,7 @@ package datalogger.activation;
 import com.femtioprocent.fpd.appl.Appl;
 import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.propaganda.client.PropagandaClient;
-import com.femtioprocent.propaganda.connector.Connector_Plain;
+import com.femtioprocent.propaganda.connector.Connector_Tcp;
 import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;
 import static com.femtioprocent.propaganda.data.AddrType.anonymousAddrType;
 import static com.femtioprocent.propaganda.data.AddrType.serverAddrType;
@@ -47,7 +47,7 @@ public class CollectActivation extends Activation {
                                 + "@DATALOGGER")));
                 for (;;) {
                     Datagram datagram = getConnector().recvMsg();
-                    S.pL("Collector got: " + datagram);
+                    System.err.println("Collector got: " + datagram);
                     if (datagram == null) {
                         break;
                     }
@@ -108,18 +108,18 @@ public class CollectActivation extends Activation {
                     }
                 }
             } catch (PropagandaException ex) {
-                S.pL("CollectorClient: " + ex);
+                System.err.println("CollectorClient: " + ex);
             }
         }
     }
 
     public void doCollecting() {
-        final Connector_Plain conn = (Connector_Plain) PropagandaConnectorFactory.create("Plain", "Collector", null, null);
+        final Connector_Tcp conn = (Connector_Tcp) PropagandaConnectorFactory.create("Tcp", "Collector", null, null);
         final CollectorClient client = new CollectorClient();
         System.err.println("Connect propaganda: " + Appl.flags.get("p.host") + ' ' + Integer.parseInt(Appl.flags.get("p.port")));
         if (conn.connect(Appl.flags.get("p.host"), Integer.parseInt(Appl.flags.get("p.port")))) {
             client.setConnectorAndAttach(conn);
-            S.pL("conn " + conn);
+            System.err.println("conn " + conn);
             Thread th2 = new Thread(() -> client.start());
             th2.start();
         } else {
