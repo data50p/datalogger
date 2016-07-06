@@ -147,7 +147,7 @@ public class EliqActivation extends Activation {
         for (;;) {
             try {
 
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(120);
 
                 try (ProcessManager pm = new ProcessManager("/usr/local/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=" + accessToken)) {
                     BufferedReader br = pm.open();
