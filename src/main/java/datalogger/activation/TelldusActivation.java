@@ -26,7 +26,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -166,6 +171,7 @@ public class TelldusActivation extends Activation {
                                 if (map.hwid.equals("kjell-TH")) {
                                     Double tvalue = null;
                                     Double hvalue = null;
+                                    long tivalue = 0;
 
                                     if (line.contains("id=" + collectId)) {
                                         int ix = line.indexOf("temperature=");
@@ -184,17 +190,26 @@ public class TelldusActivation extends Activation {
                                             System.err.println(" >h> " + s2);
                                             hvalue = Double.valueOf(s2);
                                         }
+                                        ix = line.indexOf("time=");  // 2016-07-06 15:59:34
+                                        if (ix > 0) {
+                                            String s1 = line.substring(ix + 5);
+                                            int ix2 = s1.indexOf("\t");
+                                            String s2 = s1.substring(0, ix2);
+                                            System.err.println(" >T> " + s2);
+					    Date date = parseDate(s2);
+					    tivalue = date.getTime();
+                                        }
                                     }
                                     if (tvalue != null) {
                                         String w = map.dest_spec.replace("$W", "temp");
-                                        Message rmsg = logMessage("add " + w + " " + tvalue);
+                                        Message rmsg = logMessage("addT " + tivalue + " " + w + " " + tvalue);
                                         System.err.println(Ansi.green("send T " + rmsg));
                                         client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                                 + "@DATALOGGER"), MessageType.plain, rmsg));
                                     }
                                     if (hvalue != null) {
                                         String w = map.dest_spec.replace("$W", "humidity");
-                                        Message rmsg = logMessage("add " + w + " " + hvalue);
+                                        Message rmsg = logMessage("addT " + tivalue + " " + w + " " + hvalue);
                                         System.err.println(Ansi.green("send H " + rmsg));
                                         client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                                 + "@DATALOGGER"), MessageType.plain, rmsg));
@@ -214,6 +229,17 @@ public class TelldusActivation extends Activation {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private Date parseDate(String cd) {
+        try {
+            return Date.from(Instant.from(LocalDateTime.parse(cd, formatter).atZone(ZoneId.systemDefault())));
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public void start() {
