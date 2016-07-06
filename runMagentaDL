@@ -1,1 +1,1 @@
-java -jar target/dataloggerserver-1.1-SNAPSHOT-jexec.jar -env=test -p.host=localhost -r.host=iMac5k.local -p.port=8199 -env=prod
+java -jar target/dataloggerserver-1.1-SNAPSHOT-jexec.jar -env=test -p.host=localhost -r.host=xider.local -p.port=8199 -env=prod
