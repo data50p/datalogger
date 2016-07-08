@@ -12,7 +12,6 @@ import datalogger.activation.Activation;
 import datalogger.server.db.BootstrapDB;
 import datalogger.server.db.DataLoggerService;
 import datalogger.server.db.PersistingService;
-import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.Unit;
 import java.util.logging.Level;

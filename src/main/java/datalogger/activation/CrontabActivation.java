@@ -6,7 +6,6 @@
 package datalogger.activation;
 
 import com.femtioprocent.fpd.appl.Appl;
-import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Tcp;
 import com.femtioprocent.propaganda.connector.PropagandaConnectorFactory;

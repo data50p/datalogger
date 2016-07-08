@@ -6,7 +6,6 @@
 package datalogger.activation;
 
 import com.femtioprocent.fpd.appl.Appl;
-import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.fpd.util.Ansi;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Tcp;
@@ -139,6 +138,8 @@ public class TelldusActivation extends Activation {
 
         mapperList.add(new Mapper(135, "ute1 $W:out", "kjell-TH"));  // $W -> temp | humidity
         mapperList.add(new Mapper(151, "inne1 $W:in", "kjell-TH"));
+        mapperList.add(new Mapper(167, "inne2 $W:in", "kjell-TH"));
+        mapperList.add(new Mapper(183, "ute2 $W:out", "kjell-TH"));
 
         for (;;) {
             try {

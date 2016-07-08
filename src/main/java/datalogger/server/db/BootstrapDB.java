@@ -8,8 +8,6 @@ package datalogger.server.db;
 import com.femtioprocent.fpd.util.Ansi;
 import com.femtioprocent.fpd2.util.Counter;
 import com.femtioprocent.fpd2.util.MilliTimer;
-import com.femtioprocent.fpd2.util.Pair;
-import com.femtioprocent.fpd2.util.Tuple2;
 import datalogger.server.Main;
 import datalogger.server.db.PersistingService.TransactionJob;
 import datalogger.server.db.entity.LogCurrentData;
@@ -17,8 +15,6 @@ import datalogger.server.db.entity.LogData;
 import datalogger.server.db.entity.LogDevice;
 import datalogger.server.db.entity.LogType;
 import datalogger.server.db.entity.Unit;
-import java.io.PrintStream;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -65,6 +61,8 @@ public class BootstrapDB {
 	{"ute1", "ute sovrummet"}, //
 	{"inne1", "inne sovrummet"}, //
 	{"elmät", "Elmätare skåpet"}, //
+	{"ute2", "Uterummet"}, //
+	{"inne2", "Datahallen vinden"}, //
     };
 
     public void update() {

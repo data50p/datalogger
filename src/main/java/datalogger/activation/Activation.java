@@ -5,7 +5,6 @@
  */
 package datalogger.activation;
 
-import datalogger.activation.TelldusActivation.TelldusClient;
 import datalogger.server.Main;
 import datalogger.server.db.DataLoggerService;
 import datalogger.server.db.PersistingService;

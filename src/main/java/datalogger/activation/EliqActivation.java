@@ -6,7 +6,6 @@
 package datalogger.activation;
 
 import com.femtioprocent.fpd.appl.Appl;
-import com.femtioprocent.fpd.sundry.S;
 import com.femtioprocent.fpd.util.Ansi;
 import com.femtioprocent.propaganda.client.PropagandaClient;
 import com.femtioprocent.propaganda.connector.Connector_Tcp;
@@ -23,7 +22,6 @@ import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Instant;
