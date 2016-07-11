@@ -79,7 +79,7 @@ public class CollectActivation extends Activation {
                                 // log addT <timestamp> <dev> <type> <value>
                                 try {
                                     Long tm = Long.parseLong(msgArr[1]);
-                                    Date timestamp = new Date(tm);
+                                    Date timestamp = tm == 0 ? null : new Date(tm);
                                     Double val = Double.parseDouble(msgArr[4].replace(",", "."));
                                     int id = log(msgArr[2], msgArr[3], val, timestamp);
                                     Message rmsg;

@@ -139,7 +139,7 @@ public class TelldusActivation extends Activation {
         mapperList.add(new Mapper(135, "ute1 $W:out", "kjell-TH"));  // $W -> temp | humidity
         mapperList.add(new Mapper(151, "inne1 $W:in", "kjell-TH"));
         mapperList.add(new Mapper(167, "inne2 $W:in", "kjell-TH"));
-        mapperList.add(new Mapper(183, "ute2 $W:out", "kjell-TH"));
+        mapperList.add(new Mapper(183, "ute2 $" + "W:out", "kjell-TH"));
 
         for (;;) {
             try {
@@ -172,7 +172,7 @@ public class TelldusActivation extends Activation {
                                 if (map.hwid.equals("kjell-TH")) {
                                     Double tvalue = null;
                                     Double hvalue = null;
-                                    long tivalue = 0;
+                                    long timeStamp = 0;
 
                                     if (line.contains("id=" + collectId)) {
                                         int ix = line.indexOf("temperature=");
@@ -198,19 +198,19 @@ public class TelldusActivation extends Activation {
                                             String s2 = s1.substring(0, ix2);
                                             System.err.println(" >T> " + s2);
 					    Date date = parseDate(s2);
-					    tivalue = date.getTime();
+					    timeStamp = date.getTime();
                                         }
                                     }
                                     if (tvalue != null) {
                                         String w = map.dest_spec.replace("$W", "temp");
-                                        Message rmsg = logMessage("addT " + tivalue + " " + w + " " + tvalue);
+                                        Message rmsg = logMessage("addT " + timeStamp + " " + w + " " + tvalue);
                                         System.err.println(Ansi.green("send T " + rmsg));
                                         client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                                 + "@DATALOGGER"), MessageType.plain, rmsg));
                                     }
                                     if (hvalue != null) {
                                         String w = map.dest_spec.replace("$W", "humidity");
-                                        Message rmsg = logMessage("addT " + tivalue + " " + w + " " + hvalue);
+                                        Message rmsg = logMessage("addT " + timeStamp + " " + w + " " + hvalue);
                                         System.err.println(Ansi.green("send H " + rmsg));
                                         client.sendMsg(new Datagram(client.getDefaultAddrType(), AddrType.createAddrType("dl-collector-" + hostname
                                                 + "@DATALOGGER"), MessageType.plain, rmsg));

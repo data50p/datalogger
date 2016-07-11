@@ -53,6 +53,7 @@ public class BootstrapDB {
 	{"temp:in", "temp inside", "°C"},
 	{"humidity:in", "humidity inside", "%"}, //
 	{"el", "el-effekt", "W"}, //
+	{"alarm", "alarm", "*"}, //
     };
 
     String bootstrapDevs[][] = new String[][]{
