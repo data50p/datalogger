@@ -17,9 +17,13 @@ public class ProcessManager implements Closeable {
     public BufferedReader open() {
         try {
             pr = b.start();
-            br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+	    System.err.println("Process starrted: " + pr);
+            InputStream ins = pr.getInputStream();
+            br = new BufferedReader(new InputStreamReader(ins));
+	    System.err.println("Process starrted: " + pr + ' ' + ins + ' ' + br);
             return br;
         } catch (IOException e) {
+	    System.err.println("Can't fork " + e);
             return null;
         }
     }
