@@ -140,10 +140,13 @@ public class EliqActivation extends Activation {
         for (;;) {
             try {
 
-                TimeUnit.SECONDS.sleep(120);
 
+		System.err.println("EliqActivation " + Ansi.red("Access Eliq"));
                 try (ProcessManager pm = new ProcessManager("/usr/local/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=" + accessToken)) {
+                //try (ProcessManager pm = new ProcessManager("/usr/local/Cellar/wget/1.19.1/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=" + accessToken)) {
+		TimeUnit.SECONDS.sleep(1);
                     BufferedReader br = pm.open();
+		    TimeUnit.SECONDS.sleep(1);
                     for (;;) {
                         final String line = br.readLine();
                         System.err.println("EliqActivation " + Ansi.red("got line " + line));
@@ -164,9 +167,12 @@ public class EliqActivation extends Activation {
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
+	    
+		TimeUnit.SECONDS.sleep(120);
             } catch (PropagandaException | InterruptedException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
+                
         }
     }
 
