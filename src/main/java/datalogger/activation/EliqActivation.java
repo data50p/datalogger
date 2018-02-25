@@ -142,7 +142,8 @@ public class EliqActivation extends Activation {
 
 
 		System.err.println("EliqActivation " + Ansi.red("Access Eliq"));
-                try (ProcessManager pm = new ProcessManager("/usr/local/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=" + accessToken)) {
+		//try (ProcessManager pm = new ProcessManager("/bin/bash", "-c", "accessEliq /usr/local/bin/wget -O Z_e https://my.eliq.se/api/datanow?accesstoken=" + accessToken + "; echo '' >> Z_e; cat Z_e")) {
+		try (ProcessManager pm = new ProcessManager("/bin/bash", "./accessEliq")) {
                 //try (ProcessManager pm = new ProcessManager("/usr/local/Cellar/wget/1.19.1/bin/wget", "-O", "-", "https://my.eliq.se/api/datanow?accesstoken=" + accessToken)) {
 		TimeUnit.SECONDS.sleep(1);
                     BufferedReader br = pm.open();

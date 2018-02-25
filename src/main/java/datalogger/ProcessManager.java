@@ -1,6 +1,7 @@
 package datalogger;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * Created by lars on 2016-01-24.
@@ -12,6 +13,8 @@ public class ProcessManager implements Closeable {
 
     public ProcessManager(String... args) {
         b = new ProcessBuilder(args);
+	Map<String, String> env = b.environment();
+ 	env.put("PS1", "");
     }
 
     public BufferedReader open() {

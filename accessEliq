@@ -1,3 +1,5 @@
-/usr/local/bin/wget -O Z_e https://my.eliq.io/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9 > /dev/null
+#!/bin/bash
+/usr/local/bin/wget -O Z_e https://my.eliq.io/api/datanow?accesstoken=7095a568f8dc459d88779a1e77fcc8c9 > /dev/null 2>&1
 cat Z_e
+echo ''
 
